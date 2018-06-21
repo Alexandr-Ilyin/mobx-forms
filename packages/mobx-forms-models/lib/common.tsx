@@ -1,4 +1,6 @@
-import { computed, observable } from 'mobx';
+import { computed, observable,autorun } from 'mobx';
+import { action, decorate } from 'mobx';
+
 
 export interface IFieldContainer {
   add(field: IFormField)
@@ -10,17 +12,38 @@ export interface IFormField {
   touch();
 }
 
+
+export class TestA {
+  @observable B = "2";
+}
+// decorate(TestA, {
+//   B: observable,
+// });
+
+let a = new TestA();
+a.B = "4f";
+autorun(() => console.log("X-" + a.B));
+debugger
+a.B = "2344544";
+a.B = "2344541114";
+a.B = "234454111423";
+
+export  const AAA = a;
+
+
 export class FormField<T> implements IFormField {
   @observable validators = [];
   @observable value: T;
   @observable name: string;
   @observable touched;
   @observable loading;
-  uniqueId = guid();
+  @observable B;
+
 
   constructor(parent: IFieldContainer, name: string) {
     this.name = name;
-    parent.add(this);
+    if (parent)
+      parent.add(this);
   }
 
   touch() {

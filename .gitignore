@@ -1,0 +1,8 @@
+packages/mobx-forms-material/.cache/*
+packages/mobx-forms-material/node_modules/*
+packages/mobx-forms-models/node_modules/*
+packages/mobx-forms-material/dist/*
+packages/mobx-forms-material/.idea/*
+.idea/*
+**/node_modules/*
+**/.cache/

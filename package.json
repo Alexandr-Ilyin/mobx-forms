@@ -1,0 +1,22 @@
+{
+  "name": "@mobx-forms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alexandr-Ilyin/mobx-forms.git"
+  },
+  "author": "alexander ilyin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alexandr-Ilyin/mobx-forms/issues"
+  },
+  "homepage": "https://github.com/Alexandr-Ilyin/mobx-forms#readme",
+  "devDependencies": {
+    "lerna": "^2.11.0"
+  }
+}
