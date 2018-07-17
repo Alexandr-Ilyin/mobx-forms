@@ -10,20 +10,32 @@
   "license": "ISC",
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
-    "cypress": "^3.0.1",
+    "cash-dom": "^2.3.3",
     "less": "^3.0.4",
     "typescript": "^2.9.2"
   },
   "peerDependencies": {
-    "mobx": "^5.0.3",
-    "mobx-react": "^5.2.3",
+    "mobx": "^3.6.0",
+    "mobx-react": "^4.3.2",
     "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "@material-ui/core": "^1.2.2",
+    "@material-ui/icons": "^1.1.0"
   },
   "dependencies": {
-    "@material-ui/core": "^1.2.2",
-    "@material-ui/icons": "^1.1.0",
     "@mobx-forms/mobx-forms-models": "../mobx-forms-models",
-    "react-select": "^1.2.1"
+    "@types/lodash": "^4.14.112",
+    "animated-scroll-to": "^1.2.2",
+    "assert": "^1.4.1",
+    "cash-js": "^1.0.2",
+    "chibi": "0.0.0",
+    "chibijs": "^3.0.9",
+    "events": "^3.0.0",
+    "fast-diff": "^1.1.2",
+    "loadash": "^1.0.0",
+    "lodash": "^4.17.10",
+    "react-router-dom": "^4.3.1",
+    "react-select": "^1.2.1",
+    "styled-components": "^3.3.3"
   }
 }

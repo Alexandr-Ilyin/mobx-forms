@@ -6,3 +6,5 @@ packages/mobx-forms-material/.idea/*
 .idea/*
 **/node_modules/*
 **/.cache/
+packages/mobx-forms-models/.idea/*
+packages/mobx-forms-tests/dist/*

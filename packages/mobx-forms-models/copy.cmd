@@ -1,0 +1,1 @@
+for /R "c:\projects\mobx-forms\packages\mobx-forms-tests\node_modules\mobx\" %%f in (*.d.ts) do copy %%f "c:\projects\mobx-forms\packages\mobx-forms-models\node_modules\mobx\"

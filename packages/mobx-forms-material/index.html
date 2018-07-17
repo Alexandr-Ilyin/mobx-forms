@@ -1,12 +1,46 @@
+<!DOCTYPE html>
 <html>
+<head>
+  <link type="text/css" href="./testRunner/src/mocha/mocha.css" rel="stylesheet">
+  <link type="text/css" href="./testRunner/src/runner.css" rel="stylesheet">
+  <link type="text/css" href="./src/styles.less" rel="stylesheet">
+  <style>
+    A{color: #0b97c4}
+    .navbar-fixed-top{
+      position: absolute !important;
+    }
+    .SCREEN{
+      left: 470px !important;
+    }
+    .SCREEN .two-column-container__left{
+      width: 20%;
+      min-width: 20%;
+    }
+  </style>
+</head>
 <body>
-  <div id="main"></div>
-  <div>
-    <link rel="stylesheet" type="text/css" href="src/multiselect/multiSelect.less">
-    <script src="index.tsx"></script>
-  </div>
 
+<div id="notification">&nbsp;</div>
+<div id="mocha"></div>
+
+<script src="./testRunner/src/mocha/mocha.js"></script>
+
+<script src="./testRunner/testRunner.ts"></script>
+<script>
+    initMochaRunner({});
+</script>
+
+<script src="./index.tsx"></script>
+<script>
+    var runner = mocha.run();
+    runner.on("fail",
+        function (t, e) {
+
+            console.log('test error', e);
+        });
+</script>
 
 </body>
-
 </html>
+
+
