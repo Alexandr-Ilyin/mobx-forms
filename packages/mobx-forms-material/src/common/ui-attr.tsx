@@ -19,4 +19,6 @@ export function ui(target) {
 export interface IComponent {
   bladeStyle?: any;
   render();
+
+
 }

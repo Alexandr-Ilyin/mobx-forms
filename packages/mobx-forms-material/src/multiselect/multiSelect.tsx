@@ -1,5 +1,4 @@
 import * as  React  from 'react';
-import {MultiSelectField} from 'mobx-forms-models/lib/fields';
 import {Async} from 'react-select'
 import {observer} from 'mobx-react'
 import Chip from '@material-ui/core/Chip';
@@ -13,6 +12,9 @@ import { withStyles } from '@material-ui/core/styles';
 import { styles } from './styles';
 import Select from 'react-select';
 import MenuItem from '@material-ui/core/MenuItem';
+import { toJS } from 'mobx';
+import { SelectField } from '@mobx-forms/mobx-forms-models/lib/select';
+import { MultiSelectField } from '@mobx-forms/mobx-forms-models/lib/multiSelect';
 
 class Option extends React.Component<any,any> {
   handleClick = event => {
@@ -28,8 +30,7 @@ class Option extends React.Component<any,any> {
         component="div"
         style={{
           fontWeight: isSelected ? 500 : 400,
-        }}
-      >
+        }}>
         {children}
       </MenuItem>
     );
@@ -38,24 +39,21 @@ class Option extends React.Component<any,any> {
 
 function SelectWrapped(props) {
   const { classes, ...other } = props;
-
   function renderValue(valueProps){
     {
-
       const { value, children, onRemove } = valueProps;
       const onDelete = event => {
         event.preventDefault();
         event.stopPropagation();
         onRemove(value);
       };
-
       if (onRemove) {
         return (
           <Chip
             tabIndex={-1}
             label={children}
             className={classes.chip}
-            deleteIcon={<CancelIcon onTouchEnd={onDelete} />}
+            deleteIcon={<CancelIcon className={"Select-value-icon"} onTouchEnd={onDelete} onMouseDown={onDelete} />}
             onDelete={onDelete}
           />
         );
@@ -63,21 +61,21 @@ function SelectWrapped(props) {
       return <div className="Select-value">{children}</div>;
     }
   }
-  debugger;
   return (
-
     <Async
-
         //isLoading={this.props.field.loader.loading || undefined}
         async={true} cache={{}} loadOptions={(query,cb)=>{
-        Promise.resolve().then(()=>props.field.getOptions('')).then(res=>{
-          cb(null, {options:res})
-        });
-      }}
+          Promise.resolve().then(()=>props.field.getOptions('')).then(res=>{
+            cb(null, {options:res})
+          }, err=>{
+            console.log(err);
+          });
+        }}
         onChange={e=>{
           this.props.field.touch();
           this.props.field.value=e;
         }}
+        multi={true}
         value={props.field.value}
         optionComponent={Option}
         noResultsText={<Typography>{'No results found'}</Typography>}
@@ -87,36 +85,17 @@ function SelectWrapped(props) {
         {...other}
       />
   );
-  return (
-    <Select
-      optionComponent={Option}
-      noResultsText={<Typography>{'No results found'}</Typography>}
-      arrowRenderer={arrowProps => {        return arrowProps.isOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />;      }}
-      clearRenderer={() => <ClearIcon />}
-      valueComponent={valueProps => renderValue(valueProps)}
-      {...other}
-    />
-  );
 }
-
-
-
 
 @observer
 export class InnerSelector extends React.Component<{field: MultiSelectField, classes}, any> {
   render() {
     return <Input
       fullWidth
-      onChange={(v:any)=>{
-        this.props.field.setValue(v);
-      }}
-      placeholder="Search a country (start with a)"
-      id="react-select-single"
+      onChange={(v:any)=>{this.props.field.setValue(v);}}
       inputComponent={SelectWrapped}
       inputProps={{
-        name: 'react-select-single',
-        instanceId: 'react-select-single',
-        simpleValue: true,
+        simpleValue: false,
         classes: this.props.classes,
         field:this.props.field,
       }}

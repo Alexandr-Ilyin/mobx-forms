@@ -1,5 +1,4 @@
 import * as  React from 'react';
-import { Async } from 'react-select'
 import { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
 import { IComponent, ui } from '../common/ui-attr';
@@ -10,17 +9,21 @@ import Close from '@material-ui/icons/Close';
 import * as DOM from 'react-dom';
 
 class BladeMatchPanel {
-  rule: BladeMatchRule;
+  route: BladeRouteCfg;
   cmp: IComponent;
   segment: string;
   params: any;
   @observable collapsed: boolean;
 }
 
-class BladeMatchRule {
-  match: MatchRule;
+interface BladeRouteCfg {
   makeCmp: () => IComponent;
   path: any;
+  style? : any;
+  title? : any;
+}
+interface InternalBladeRouteCfg extends BladeRouteCfg {
+  match:MatchRule
 }
 
 export function pushBlade(blade, history) {
@@ -37,20 +40,18 @@ export function pushBlade(blade, history) {
 @ui
 export class BladePanel {
   @observable private _panels: BladeMatchPanel[] = [];
-  @observable private rules: BladeMatchRule[] = [];
+  @observable private rules: InternalBladeRouteCfg[] = [];
   private history: any;
 
   get panels(): BladeMatchPanel[] {
     return this._panels;
   }
 
-  addRoute(path, makeCmp) {
-    path = "/" + trim(path, "/") + "/";
-    this.rules.push({
-      makeCmp: makeCmp,
-      path: path,
-      match: new MatchRule(path)
-    });
+  addRoute(cfg:BladeRouteCfg) {
+    let path = cfg.path = "/" + trim(cfg.path, "/") + "/";
+    cfg.style = {minWidth:"400px",float:1,...cfg.style};
+    let inner = {...cfg,match: new MatchRule(path)};
+    this.rules.push(inner);
   }
 
   private getMatches(path) {
@@ -80,7 +81,28 @@ export class BladePanel {
     this.updatePanels(history.location.pathname);
   }
 
-  pushRoute(path) {
+  pushAfter(segment, afterCmp) {
+    let newSegments = [];
+    let found = false;
+    for (let i = 0; i < this.panels.length; i++) {
+      const panel = this.panels[i];
+      if (panel.cmp != afterCmp) {
+        newSegments.push(trim(panel.segment,"/"));
+      }
+      else {
+        found = true;
+        newSegments.push(trim(panel.segment,"/"));
+        break;
+      }
+    }
+    newSegments.push(segment);
+    this.push(newSegments.join("/"));
+    if (!found) {
+      console.log("after BladePanel not found ", afterCmp);
+    }
+  }
+
+  push(path) {
     let fullPath = "/b/" + trim(path, '/') + "/be/";
     if (this.history) {
       this.history.push(fullPath);
@@ -96,7 +118,7 @@ export class BladePanel {
     let validCount = 0;
     for (let i = 0; i < Math.min(matches.length, this._panels.length); i++) {
       const match = matches[i];
-      if (this._panels[i].rule.path == match["path"]) {
+      if (this._panels[i].route.path == match["path"]) {
         validCount++;
         if (this._panels[i].cmp['updateParams']) {
           this._panels[i].cmp['updateParams'](match);
@@ -113,7 +135,7 @@ export class BladePanel {
       const match = matches[i];
       let rule = this.rules.find(x => x.path == match.path);
       this._panels.push({
-        rule: rule,
+        route: rule,
         cmp: rule.makeCmp(),
         params: match,
         collapsed: false,
@@ -134,7 +156,6 @@ export class BladePanel {
     for (let i = 0; i < this.panels.length; i++) {
       const panel = this.panels[i];
       if (panel != e) {
-
         newSegments.push(trim(panel.segment,"/"));
       }
       else {
@@ -143,8 +164,7 @@ export class BladePanel {
       }
     }
     if (found) {
-
-      this.pushRoute(newSegments.join("/"));
+      this.push(newSegments.join("/"));
     }
   }
 }
@@ -167,19 +187,19 @@ class PanelUi extends React.Component<{
         <div className="blade-panel-title" onClick={(e: any) => {
           let panel = getParent(e.target, "blade-panel");
           x.collapsed = false;
-          let portal = getParent(panel, "blade-portal")
+          let portal = getParent(panel, "blade-portal");
           setTimeout(() => {
             scrollToView(panel, portal);
           }, 500);
         }}>
-          Title 1
+          {this.getTitle(x)}
         </div>
       </div>;
     }
 
-    return <div className={"blade-panel " + "blade-panel-collapsed-" + x.collapsed} style={x.cmp.bladeStyle || {}}>
+    return <div className={"blade-panel " + "blade-panel-collapsed-" + x.collapsed} style={Object.assign({},x.cmp.bladeStyle,x.route.style)}>
       <div className="blade-panel-title">
-        Title 1
+        {this.getTitle(x)}
         <div className="blade-panel-icons">
           <a href="javascript:;" onClick={(e: any) => {
             let parentElement = getParent(e.target, "blade-panel");
@@ -201,6 +221,10 @@ class PanelUi extends React.Component<{
         {x.cmp.render()}
       </div>
     </div>
+  }
+
+  private getTitle(x: BladeMatchPanel) {
+    return (x.cmp["getTitle"] && x.cmp["getTitle"]()) || (x.route.title) ||"Untitled";
   }
 }
 

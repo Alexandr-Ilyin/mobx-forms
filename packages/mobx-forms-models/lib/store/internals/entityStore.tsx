@@ -892,7 +892,7 @@ export function applyJsonDiff(source, diff) {
 
     }
     if (clean) {
-      copy = copy.filter(x => !x || !x.__r);
+      copy = (copy as any[]).filter(x => !x || !x.__r);
     }
 
     return copy;
@@ -1733,7 +1733,7 @@ export class EntityPropMeta extends EntityPropCfg {
 
   constructor(cfg: EntityPropCfg) {
     super();
-    _.extend(this, cfg);
+    _.extend(this as any, cfg);
   }
 
   isSimple() {

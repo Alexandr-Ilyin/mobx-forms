@@ -16,6 +16,7 @@ export const styles = theme => ({
     '.Select-control': {
       display: 'flex',
       alignItems: 'center',
+
       border: 0,
       height: 'auto',
       background: 'transparent',

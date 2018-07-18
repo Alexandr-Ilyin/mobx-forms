@@ -1,3 +1,4 @@
+import Edit from '@material-ui/icons/Edit';
 import { ui } from '../common/ui-attr';
 import { observable } from 'mobx';
 import * as React from 'react';
@@ -23,16 +24,48 @@ export class Column<T> {
     this.options = options;
   }
 }
+
+export abstract class ListAction<T>{
+  abstract renderCell(v:T);
+}
+
+export class EditAction extends ListAction<T>{
+  private editFunc:(v:T)=>any;
+
+  constructor(editFunc:(v:T)=>any) {
+    super();
+    this.editFunc = editFunc;
+  }
+
+  renderCell(v:T){
+    return <a href="javascript:;" onClick={()=>this.editFunc(v)}>
+      <Edit/>
+    </a>;
+  }
+}
+
+
+export class ListActions{
+  static Edit<T>(editFunc) {return new EditAction(editFunc) };
+}
+
+
+
+
 @ui
 export class List<T> {
 
   @observable columns:Column<T>[] = [];
+  @observable actions:ListAction<T>[] = [];
   @observable data:any[] = [];
   @observable page=0;
   @observable rowsPerPage=50;
 
   setData(data:T[]){
     this.data = data;
+  }
+  addRowAction(a: ListAction) {
+      this.actions.push(a);
   }
 
   addColumn(title, format:(t:T)=>any){
@@ -44,6 +77,7 @@ export class List<T> {
       <TableHead>
         <TableRow>
           {this.columns.map(c=><TableCell>{c.title}</TableCell>)}
+          <TableCell/>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -51,6 +85,9 @@ export class List<T> {
           return (
             <TableRow key={n.id}>
               {this.columns.map(c=><TableCell>{c.format(n)}</TableCell>)}
+              <TableCell padding="none">
+                {this.actions.map((x)=>x.renderCell(n))}
+              </TableCell>
             </TableRow>
           );
         })}

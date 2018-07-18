@@ -1,5 +1,4 @@
 import * as React from 'react';
-import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import { MultiSelectField } from '@mobx-forms/mobx-forms-models/lib/multiSelect';
 import * as bp1 from "babel-polyfill";
@@ -7,7 +6,8 @@ import { renderTestElement } from "./testRunner/utils/testHelper";
 import { SelectField } from '@mobx-forms/mobx-forms-models/lib/select';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
-import { StrField } from '@mobx-forms/mobx-forms-models/lib/simpleFields';
+import { StrField } from 'src/strField/strField';
+import { Form } from 'src/forms/common';
 import { MultiSelect } from './src/multiselect/multiSelect';
 import { Select } from './src/select/select';
 import { observable } from 'mobx';
@@ -15,7 +15,8 @@ import { ui } from './src/common/ui-attr';
 import { BladePanel, pushBlade, trim } from './src/bladepanel/bladePanel';
 import * as assert from 'assert';
 import * as history from 'history';
-import { List } from './src/list/list';
+import { List, ListAction, ListActions } from './src/list/list';
+import { Validation } from './src/forms/validators';
 
 let h = history.createHashHistory();
 window._xx = bp1;
@@ -54,40 +55,72 @@ describe("Multi select", function() {
   // });
 
   it("check trim.", function() {
-    assert.equal(trim("aavaa","a"),"v");
-    assert.equal(trim("aav","a"),"v");
-    assert.equal(trim("v","a"),"v");
-    assert.equal(trim("vaa","a"),"v");
+    assert.equal(trim("aavaa", "a"), "v");
+    assert.equal(trim("aav", "a"), "v");
+    assert.equal(trim("v", "a"), "v");
+    assert.equal(trim("vaa", "a"), "v");
   });
 
   it("check blade panel routes.", function() {
     class C1 {render() { return <h1>C1</h1>; }}
+
     class C2 {render() { return <h1>C2</h1>; }}
 
     let panel = new BladePanel();
     panel.addRoute("c1", () => new C1());
     panel.addRoute("c2-{id}", () => new C2());
     panel.updatePanels("/b/c1/c2-111/be/");
-    assert.equal(panel.panels.length,2);
-    assert.equal(panel.panels[1].params["id"],"111");
+    assert.equal(panel.panels.length, 2);
+    assert.equal(panel.panels[1].params["id"], "111");
     panel.updatePanels("/b/c1/c2-1/c1/be/");
-    assert.equal(panel.panels.length,3);
+    assert.equal(panel.panels.length, 3);
   });
 
   it("list test", function() {
-    interface User{
+    interface User {
       name;
       lastName;
+      id;
+    };
+
+    @ui
+    class UserDetails extends Form {
+      userName = new StrField(this,{displayName:"Name"});
+      lastName = new StrField(this,{displayName:"Last name",validations:[Validation.required<string>()]});
+
+      render() {
+        return <div>
+          {this.userName.render()}
+          {this.lastName.render()}
+        </div>;
+      }
     }
-    let list = new List<User>();
-    list.addColumn("Name", u=>u.name);
-    list.addColumn("Last name", u=>u.lastName);
-    list.setData([
-      {name:"Ivan", lastName:"Turgenev"},
-      {name:"Alex", lastName:"Pushkin"}
-    ]);
-    renderTestElement(<div style={{width:"1000px",height:"700px",border:"1px solid gray"}}>{
-      list.render()}</div>);
+
+    let bp = new BladePanel();
+
+    bp.addRoute({
+      path: "user-{id}",
+      makeCmp: () => new UserDetails()
+    });
+
+    bp.addRoute({
+      path: "users", makeCmp: () => {
+        let list = new List<User>();
+        list.addColumn("Name", u => u.name);
+        list.addColumn("Last name", u => u.lastName);
+        list.addRowAction(ListActions.Edit(u => bp.pushAfter("user-" + u.id,list)));
+        list.setData([
+          { name: "Ivan", lastName: "Turgenev", id: 1 },
+          { name: "Alex", lastName: "Pushkin", id: 2 }
+        ]);
+        return list;
+      }, style: { minWidth: "500px", flex: 1 }, title: "User list"
+    });
+
+    bp.push("users");
+
+    renderTestElement(<div style={{ width: "1000px", height: "700px", border: "1px solid gray" }}>{
+      bp.render()}</div>);
   });
 
   it("admin api test", function() {
@@ -95,15 +128,15 @@ describe("Multi select", function() {
     @ui
     class UserList {
       bladeStyle = {
-        "minWidth":"600px",
-        "flex" : "1"
+        "minWidth": "600px",
+        "flex": "1"
       };
 
       render() {
-        return <div style={{'background':''}}>          <b>panel</b>
-            <button onClick={()=>{pushBlade("/users",h);}}>
-              Add panel
-            </button>
+        return <div style={{ 'background': '' }}><b>panel</b>
+          <button onClick={() => {pushBlade("/users", h);}}>
+            Add panel
+          </button>
         </div>;
       }
     }
@@ -123,9 +156,9 @@ describe("Multi select", function() {
     }
 
     let app = new SampleApp1();
-    renderTestElement(<div style={{width:"1000px",height:"700px",border:"1px solid gray"}}>{app.render()}</div>);
-     app.panel.connectToHistory(h);
-     app.panel.pushRoute("users");
+    renderTestElement(<div style={{ width: "1000px", height: "700px", border: "1px solid gray" }}>{app.render()}</div>);
+    app.panel.connectToHistory(h);
+    app.panel.push("users");
   });
 
 });

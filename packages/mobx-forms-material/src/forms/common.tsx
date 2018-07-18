@@ -1,5 +1,5 @@
 import { computed, observable, autorun } from 'mobx';
-import { removeArrayItem } from '../../mobx-forms-material/src/common/utils';
+import { removeArrayItem } from '../common/utils';
 
 export interface IFieldContainer {
   addField(field: IFormField)
@@ -10,16 +10,6 @@ export interface IFormField {
   displayName?: string
   isValid(): boolean
   touch();
-}
-
-export interface IValidator<T> {
-  (v: T, owner: FormField<T>): string
-}
-
-export interface FormFieldCfg<T> {
-  defaultValue?: T,
-  validations?: IValidator<T>[]
-  displayName?: string
 }
 
 export class Form implements IFormField, IFieldContainer {
@@ -50,7 +40,17 @@ export class Form implements IFormField, IFieldContainer {
     this.touch();
     return this.isValid();
   }
+}
 
+
+export interface IValidator<T> {
+  (v: T, owner: FormField<T>): string
+}
+
+export interface FormFieldCfg<T> {
+  defaultValue?: T,
+  validations?: IValidator<T>[]
+  displayName?: string
 }
 
 export class FormField<T> implements IFormField {
@@ -104,5 +104,3 @@ export class FormField<T> implements IFormField {
     return null;
   }
 }
-console.log("asd111");
-//a=

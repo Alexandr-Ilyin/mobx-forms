@@ -17,12 +17,14 @@
   },
   "homepage": "https://github.com/Alexandr-Ilyin/mobx-forms#readme",
   "dependencies": {
+    "@types/fast-diff": "^1.1.0",
     "@types/lodash": "^4.14.110",
+    "events": "^3.0.0",
+    "fast-diff": "^1.1.2",
     "lodash": "^4.17.10"
   },
   "peerDependencies": {
     "mobx": "^3.6.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
