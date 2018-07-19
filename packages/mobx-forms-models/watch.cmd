@@ -1,1 +1,0 @@
-tsc --declaration --watch

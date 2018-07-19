@@ -1,22 +1,22 @@
 import * as React from 'react';
 import FormControl from '@material-ui/core/FormControl';
-import { MultiSelectField } from '@mobx-forms/mobx-forms-models/lib/multiSelect';
 import * as bp1 from "babel-polyfill";
 import { renderTestElement } from "./testRunner/utils/testHelper";
-import { SelectField } from '@mobx-forms/mobx-forms-models/lib/select';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
-import { StrField } from 'src/strField/strField';
-import { Form } from 'src/forms/common';
+import { StrField } from './src/strField';
 import { MultiSelect } from './src/multiselect/multiSelect';
 import { Select } from './src/select/select';
 import { observable } from 'mobx';
-import { ui } from './src/common/ui-attr';
+import { cmp } from './src/common/ui-attr';
 import { BladePanel, pushBlade, trim } from './src/bladepanel/bladePanel';
 import * as assert from 'assert';
 import * as history from 'history';
 import { List, ListAction, ListActions } from './src/list/list';
 import { Validation } from './src/forms/validators';
+import { FormBase } from './src/forms/basic';
+import { SelectField } from './src/select/selectField';
+import './tests/asyncLoaderTests';
 
 let h = history.createHashHistory();
 window._xx = bp1;
@@ -29,7 +29,7 @@ let getOptions = async (query) => [
 describe("Multi select", function() {
 
   it("Simple input looks fine", async function() {
-    let selectField = new StrField(null, { displayName: "F1" });
+    let selectField = new Index(null, { displayName: "F1" });
     //await selectField.setValueKey("qqq");
     renderTestElement(<div style={{ margin: "50px" }}><FormControl>
       <InputLabel htmlFor="f1">MyOption </InputLabel>
@@ -76,6 +76,25 @@ describe("Multi select", function() {
     assert.equal(panel.panels.length, 3);
   });
 
+  it("form test", function() {
+    @cmp
+    class UserDetails extends FormBase {
+      userName = new StrField(this,{displayName:"Name"});
+      lastName = new StrField(this,{displayName:"Last name",validations:[Validation.required<string>()]});
+
+      render() {
+        return <div>
+          {this.userName.render()}
+          {this.lastName.render()}
+        </div>;
+      }
+    }
+    let u = new UserDetails();
+    renderTestElement(<div style={{ width: "1000px", height: "700px", border: "1px solid gray" }}>{
+      u.render()}</div>);
+
+
+  });
   it("list test", function() {
     interface User {
       name;
@@ -83,10 +102,10 @@ describe("Multi select", function() {
       id;
     };
 
-    @ui
-    class UserDetails extends Form {
+    @cmp
+    class UserDetails extends FormBase {
       userName = new StrField(this,{displayName:"Name"});
-      lastName = new StrField(this,{displayName:"Last name",validations:[Validation.required<string>()]});
+      lastName = new StrField(this,{displayName:"Last name",validations:[Validation.required() as any]});
 
       render() {
         return <div>
@@ -125,7 +144,7 @@ describe("Multi select", function() {
 
   it("admin api test", function() {
 
-    @ui
+    @cmp
     class UserList {
       bladeStyle = {
         "minWidth": "600px",
@@ -141,7 +160,7 @@ describe("Multi select", function() {
       }
     }
 
-    @ui
+    @cmp
     class SampleApp1 {
       panel: BladePanel;
 

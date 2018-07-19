@@ -10,11 +10,8 @@ import ClearIcon from '@material-ui/icons/Clear';
 import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
 import { styles } from './styles';
-import Select from 'react-select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { toJS } from 'mobx';
-import { SelectField } from '@mobx-forms/mobx-forms-models/lib/select';
-import { MultiSelectField } from '@mobx-forms/mobx-forms-models/lib/multiSelect';
 
 class Option extends React.Component<any,any> {
   handleClick = event => {

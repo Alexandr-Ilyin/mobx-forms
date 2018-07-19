@@ -1,7 +1,7 @@
 import * as  React from 'react';
 import { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
-import { IComponent, ui } from '../common/ui-attr';
+import { IComponent, cmp } from '../common/ui-attr';
 import { MatchRule } from './pathMathing';
 import { addClass, getParent, removeClass, scrollToView, scrollXToEnd, trim } from '../common/utils';
 import RemoveCircle from '@material-ui/icons/RemoveCircleOutline';
@@ -37,7 +37,7 @@ export function pushBlade(blade, history) {
   history.push('/b/' + segments.join('/') + '/be/');
 }
 
-@ui
+@cmp
 export class BladePanel {
   @observable private _panels: BladeMatchPanel[] = [];
   @observable private rules: InternalBladeRouteCfg[] = [];

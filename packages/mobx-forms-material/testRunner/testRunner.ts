@@ -88,8 +88,10 @@ export class TestRunner {
     $body.append(menu);
     menu.find(".run").click(function () {
 
-      const path = window.location.href.match(/(.*?)(\?|$)/)[1];
-      window.location.href = path + "?grep=" + encodeURIComponent(currentText) + "&runTests=" + getUrlParam(window.location.href, "runTests");
+      let href = window.location.href;
+      href = href.replace(/#.*/,"");
+      const path = href.match(/(.*?)(\?|$)/)[1];
+      window.location.href = path + "?grep=" + encodeURIComponent(currentText) + "&runTests=" + getUrlParam(href, "runTests");
     });
     menu.find(".copyName").click(function () {
       var testName = currentText.split(";")[1];

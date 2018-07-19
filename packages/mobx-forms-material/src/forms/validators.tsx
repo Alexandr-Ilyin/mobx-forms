@@ -1,4 +1,4 @@
-import { IFormField, IValidator } from '../../../mobx-forms-models/lib/common';
+import { IFormField, IValidator } from './basic';
 
 export class Validation {
   static requiredMsg(t:IFormField) : string{
@@ -9,7 +9,7 @@ export class Validation {
 
   static required<T>() : IValidator<T>{
     return (val:any, f)=>{
-      if (val==null)
+      if (val==null || val==="")
         return Validation.requiredMsg(f);
 
       if (val && val.length===0)

@@ -1,5 +1,5 @@
 import Edit from '@material-ui/icons/Edit';
-import { ui } from '../common/ui-attr';
+import { cmp } from '../common/ui-attr';
 import { observable } from 'mobx';
 import * as React from 'react';
 import Table from '@material-ui/core/Table';
@@ -10,7 +10,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
 
-@ui
+@cmp
 export class Column<T> {
   title;
   format: (v: T) => any;
@@ -52,7 +52,7 @@ export class ListActions{
 
 
 
-@ui
+@cmp
 export class List<T> {
 
   @observable columns:Column<T>[] = [];
