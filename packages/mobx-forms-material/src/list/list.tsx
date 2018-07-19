@@ -29,8 +29,8 @@ export abstract class ListAction<T>{
   abstract renderCell(v:T);
 }
 
-export class EditAction extends ListAction<T>{
-  private editFunc:(v:T)=>any;
+export class EditAction<T> extends ListAction<T>{
+  private readonly editFunc:(v:T)=>any;
 
   constructor(editFunc:(v:T)=>any) {
     super();
@@ -38,7 +38,7 @@ export class EditAction extends ListAction<T>{
   }
 
   renderCell(v:T){
-    return <a href="javascript:;" onClick={()=>this.editFunc(v)}>
+    return <a href="javascript:" onClick={()=>this.editFunc(v)}>
       <Edit/>
     </a>;
   }
@@ -99,18 +99,18 @@ export class List<T> {
             count={this.data.length}
             rowsPerPage={this.rowsPerPage}
             page={this.page}
-            onChangePage={(e)=>this.handleChangePage(e)}
-            onChangeRowsPerPage={(e)=>this.handleChangeRowsPerPage(e)}
+            onChangePage={(e)=>this.handleChangePage()}
+            onChangeRowsPerPage={(e)=>this.handleChangeRowsPerPage()}
           />
         </TableRow>
       </TableFooter>
     </Table>
   }
 
-  private handleChangePage(e) {
+  private handleChangePage() {
   }
 
-  private handleChangeRowsPerPage(e) {
+  private handleChangeRowsPerPage() {
 
   }
 }

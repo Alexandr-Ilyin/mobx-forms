@@ -24,21 +24,19 @@
 <div id="mocha"></div>
 
 <script src="./testRunner/src/mocha/mocha.js"></script>
-<script src="./testRunner/testRunner.ts"></script>
 <script>
-    initMochaRunner({});
-</script>
+    mocha.setup({
+        ui: 'bdd',
+        ignoreLeaks: true,
+        timeout: 10000,
+        // bail: true
+    });
+describe("A", function () {
+    it("B", function () {
 
-<script src="./index.tsx"></script>
-<script>
-    var runner = mocha.run();
-    runner.on("fail",
-        function (t, e) {
-            console.log('test error', e);
-        });
+    })
+});
+mocha.run();
 </script>
 
 </body>
-</html>
-
-

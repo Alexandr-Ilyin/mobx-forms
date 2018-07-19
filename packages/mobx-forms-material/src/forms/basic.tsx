@@ -1,5 +1,6 @@
-import { computed, observable, autorun } from 'mobx';
+import { computed, observable} from 'mobx';
 import { removeArrayItem } from '../common/utils';
+import { AsyncLoader } from '../loader/asyncLoader';
 
 export interface IFieldContainer {
   addField(field: IFormField)
@@ -12,16 +13,6 @@ export interface IFormField {
   touch();
 }
 
-
-export class FormRoot implements IFormField, IFieldContainer {
-  constructor() {
-    this.init();
-  }
-
-  protected init() :Promise<any> {
-
-  }
-}
 export class FormBase implements IFormField, IFieldContainer {
   @observable fields: IFormField[] = [];
 
@@ -52,6 +43,23 @@ export class FormBase implements IFormField, IFieldContainer {
   }
 }
 
+
+export abstract class FormRoot extends FormBase implements IFormField, IFieldContainer {
+  loader = new AsyncLoader();
+
+  constructor(parent: IFieldContainer) {
+    super(parent);
+    this.loader.wait(() => this.init());
+  }
+
+  protected async init(): Promise<any> {
+  }
+
+  render() {
+    this.loader.render(this.renderBody())
+  }
+  abstract renderBody();
+}
 
 export interface IValidator<T> {
   (v: T, owner: FormField<T>): string

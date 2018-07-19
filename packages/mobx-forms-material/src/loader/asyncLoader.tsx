@@ -1,10 +1,13 @@
+import * as React from 'react';
 import { observable } from 'mobx';
-import { Queue } from '@material-ui/icons';
+
 import { observer } from 'mobx-react';
 import { cmp } from '../common/ui-attr';
 import { ModalService } from '../modals/modalService';
-import { ErrorModal } from './errorModal';
-
+import { ErrorModal, getErrorUi } from './errorModal';
+import { trackAsync } from '../common/trackAsync';
+import { Queue } from '../common/queue';
+import CircularProgress from '@material-ui/core/CircularProgress';
 @cmp
 export class AsyncLoader {
   @observable loaded: boolean;
@@ -125,7 +128,9 @@ class AsyncLoaderUI extends React.Component<{ loader: AsyncLoader, className?: s
     }
 
     const {className, loader, children} = this.props;
-    const loaderEl = <div className={"host host-loading " + (className || "")}><Loader noTimer={true}/></div>;
+    const loaderEl = <div className={"host host-loading " + (className || "")}>
+      <CircularProgress size={130} />
+    </div>;
     const style = loader.loading || loader.error ? {display: "none"} : {};
 
     return <div className={"host " + (className || "")} data-ft={this.props["data-ft"]}>
