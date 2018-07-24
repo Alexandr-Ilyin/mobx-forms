@@ -3,7 +3,7 @@ import { observable } from 'mobx';
 
 import { observer } from 'mobx-react';
 import { cmp } from '../common/ui-attr';
-import { ModalService } from '../modals/modalService';
+import { DialogService } from '../modals/dialogService';
 import { ErrorModal, getErrorUi } from './errorModal';
 import { trackAsync } from '../common/trackAsync';
 import { Queue } from '../common/queue';
@@ -72,7 +72,7 @@ export class AsyncLoader {
       console.log("Error:");
       console.log(err);
 
-      ModalService.show(new ErrorModal(err));
+      DialogService.show(new ErrorModal(err));
       if (this.queue.isEmpty()) {
         this.loading = false;
         this.error = err;
@@ -128,8 +128,8 @@ class AsyncLoaderUI extends React.Component<{ loader: AsyncLoader, className?: s
     }
 
     const {className, loader, children} = this.props;
-    const loaderEl = <div className={"host host-loading " + (className || "")}>
-      <CircularProgress size={130} />
+    const loaderEl = <div className={"host host-loading " + (className || "")} style={{padding:"20px"}}>
+      <CircularProgress size={60} />
     </div>;
     const style = loader.loading || loader.error ? {display: "none"} : {};
 

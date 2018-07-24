@@ -10,6 +10,8 @@ export function cmp(target) {
       return wrapped.apply(this.props.owner, this.props.args);
     }
   }
+  if (target['name'])
+    CMP['displayName'] = target['name'];
 
   target.prototype.render = function() {
     let args = arguments;

@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const bp1 = require("babel-polyfill");
+require("./tests/asyncLoaderTests");
+require("./tests/formsTest");
+require("./tests/dialogTests");
+require("./tests/bladesTests");
+require("./tests/utilsTests");
+require("./tests/listTests");
+const history = require("history");
+let h = history.createHashHistory();
+window['_xx'] = bp1;

@@ -1,7 +1,8 @@
 import Edit from '@material-ui/icons/Edit';
-import { cmp } from '../common/ui-attr';
-import { observable } from 'mobx';
+import { cmp, IComponent } from '../common/ui-attr';
+import { autorun, observable } from 'mobx';
 import * as React from 'react';
+import * as _ from 'lodash';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -9,6 +10,10 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
+import { AsyncLoader } from '../loader/asyncLoader';
+import { StrField } from '../strField';
+import { Grid } from '@material-ui/core';
+import { Queue } from '../common/queue';
 
 @cmp
 export class Column<T> {
@@ -16,101 +21,176 @@ export class Column<T> {
   format: (v: T) => any;
   private options: { isNumeric?: boolean };
 
-  constructor(title, format:(v:T)=>any, options?:{isNumeric?:boolean}) {
-    if (!options)
+  constructor(title, format: (v: T) => any, options?: { isNumeric?: boolean }) {
+    if (!options) {
       options = {};
+    }
     this.title = title;
     this.format = format;
     this.options = options;
   }
 }
 
-export abstract class ListAction<T>{
-  abstract renderCell(v:T);
+export abstract class ListAction<T> {
+  abstract renderCell(v: T);
 }
 
-export class EditAction<T> extends ListAction<T>{
-  private readonly editFunc:(v:T)=>any;
+export class EditAction<T> extends ListAction<T> {
+  private readonly editFunc: (v: T) => any;
 
-  constructor(editFunc:(v:T)=>any) {
+  constructor(editFunc: (v: T) => any) {
     super();
     this.editFunc = editFunc;
   }
 
-  renderCell(v:T){
-    return <a href="javascript:" onClick={()=>this.editFunc(v)}>
+  renderCell(v: T) {
+    return <a href="javascript:" onClick={() => this.editFunc(v)}>
       <Edit/>
     </a>;
   }
 }
 
-
-export class ListActions{
+export class ListActions {
   static Edit<T>(editFunc) {return new EditAction(editFunc) };
 }
 
+export interface DataBatch<T> {
+  items: T[],
+  totalCount?: number
+}
 
-
+export interface ListSourceCfg<T> {
+  getData(skip, take): Promise<DataBatch<T>>;
+}
 
 @cmp
 export class List<T> {
 
-  @observable columns:Column<T>[] = [];
-  @observable actions:ListAction<T>[] = [];
-  @observable data:any[] = [];
-  @observable page=0;
-  @observable rowsPerPage=50;
+  @observable loader = new AsyncLoader();
+  @observable columns: Column<T>[] = [];
+  @observable actions: ListAction<T>[] = [];
+  @observable filters: IComponent[] = [];
+  @observable data: any[] = [];
+  @observable page = 0;
+  @observable rowsPerPage = 25;
+  @observable count = 0;
+  @observable queue = new Queue();
+  private source: ListSourceCfg<T>;
 
-  setData(data:T[]){
-    this.data = data;
-  }
-  addRowAction(a: ListAction) {
-      this.actions.push(a);
-  }
-
-  addColumn(title, format:(t:T)=>any){
-      this.columns.push(new Column<T>(title, format));
+  constructor() {
+    this.onFilterChanged = _.debounce(this.onFilterChanged.bind(this), 1000);
   }
 
-  render(){
-    return <Table >
-      <TableHead>
-        <TableRow>
-          {this.columns.map(c=><TableCell>{c.title}</TableCell>)}
-          <TableCell/>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {this.data.map(n => {
-          return (
-            <TableRow key={n.id}>
-              {this.columns.map(c=><TableCell>{c.format(n)}</TableCell>)}
-              <TableCell padding="none">
-                {this.actions.map((x)=>x.renderCell(n))}
-              </TableCell>
-            </TableRow>
-          );
+  async setSource(source: ListSourceCfg<T>) {
+    this.source = source;
+    await this.updateData();
+
+  }
+
+  async updateData() {
+    await this.queue.enqueue(() => {
+      if (this.queue.length > 1) {
+        return;
+      }
+
+      return this.loader.wait(async () => {
+        let data = await this.source.getData(this.page * this.rowsPerPage, this.rowsPerPage);
+        this.data = data.items;
+        this.count = data.totalCount;
+      });
+    });
+  }
+
+  addFilter(f: IComponent) {
+    this.filters.push(f);
+    if (f['getValue']) {
+      let firstTime = true;
+      autorun(() => {
+
+        f['getValue']();
+        setTimeout(() => {
+          if (!firstTime) {
+            return this.onFilterChanged();
+          }
+          firstTime = false;
+        });
+      });
+    }
+  }
+
+  onFilterChanged() {
+
+    if (this.source != null) {
+      this.updateData();
+    }
+  }
+
+  addRowAction(a: ListAction<T>) {
+    this.actions.push(a);
+  }
+
+  addColumn(title, format: (t: T) => any) {
+    this.columns.push(new Column<T>(title, format));
+  }
+
+  render() {
+    return <div>
+      {this.filters.length > 0 &&
+      <Grid justify={'flex-end'} alignItems={'flex-end'} container={true} alignContent={'flex-end'}>
+        {this.filters.map(f => {
+          return <Grid item={true} xs={4} alignItems={'flex-end'} alignContent={'flex-end'}>
+            {f.render()}
+          </Grid>
         })}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TablePagination
-            colSpan={3}
-            count={this.data.length}
-            rowsPerPage={this.rowsPerPage}
-            page={this.page}
-            onChangePage={(e)=>this.handleChangePage()}
-            onChangeRowsPerPage={(e)=>this.handleChangeRowsPerPage()}
-          />
-        </TableRow>
-      </TableFooter>
-    </Table>
+      </Grid>}
+      <div>
+        {this.loader.render(
+          <Table>
+            <TableHead>
+              <TableRow>
+                {this.columns.map(c => <TableCell>{c.title}</TableCell>)}
+                <TableCell/>
+              </TableRow>
+            </TableHead>
+
+            {this.data.map(n => {
+              return (
+                <TableBody>
+                  <TableRow key={n.id}>
+                    {this.columns.map(c => <TableCell>{c.format(n)}</TableCell>)}
+                    <TableCell padding="none">
+                      {this.actions.map((x) => x.renderCell(n))}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              );
+            })}
+
+            {this.count > this.data.length && <TableFooter>
+              <TableRow>
+                <TablePagination
+                  colSpan={3}
+                  count={this.count}
+                  rowsPerPage={this.rowsPerPage}
+                  page={this.page}
+                  onChangePage={(e, a) => this.handleChangePage(a)}
+                  onChangeRowsPerPage={(e) => this.handleChangeRowsPerPage(e.target.value)}
+                />
+              </TableRow>
+            </TableFooter>}
+          </Table>)}
+      </div>
+    </div>;
   }
 
-  private handleChangePage() {
+  //
+  private handleChangePage(pageNum) {
+    this.page = pageNum;
+    this.updateData();
   }
 
-  private handleChangeRowsPerPage() {
-
+  private handleChangeRowsPerPage(rowsPerPage) {
+    this.rowsPerPage = rowsPerPage;
+    this.updateData();
   }
 }

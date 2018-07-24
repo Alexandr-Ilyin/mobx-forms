@@ -12,6 +12,8 @@ import { withStyles } from '@material-ui/core/styles';
 import { styles } from './styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import { toJS } from 'mobx';
+import { MultiSelectField } from './multiSelectField';
+import * as PropTypes  from 'prop-types';
 
 class Option extends React.Component<any,any> {
   handleClick = event => {
@@ -69,7 +71,9 @@ function SelectWrapped(props) {
           });
         }}
         onChange={e=>{
+          debugger
           this.props.field.touch();
+
           this.props.field.value=e;
         }}
         multi={true}
@@ -86,18 +90,49 @@ function SelectWrapped(props) {
 
 @observer
 export class InnerSelector extends React.Component<{field: MultiSelectField, classes}, any> {
+  static contextTypes = { muiFormControl: PropTypes.object };
+  static childContextTypes = { muiFormControl: PropTypes.object };
+  private muiFormControl: any;
+
+  constructor(props, context: any) {
+    super(props);
+    this.muiFormControl = context.muiFormControl;
+  }
+  componentDidMount(): void {
+    this.updateDirty();
+  }
+
+  updateDirty() {
+    if (this.muiFormControl) {
+      if (!this.props.field.isEmpty()) {
+        this.muiFormControl.onFilled();
+      }
+      else {
+        this.muiFormControl.onEmpty();
+      }
+    }
+  }
+
   render() {
+
     return <Input
       fullWidth
-      onChange={(v:any)=>{this.props.field.setValue(v);}}
+      onChange={(v:any)=>{
+        this.props.field.setValue(v);
+        this.updateDirty()
+      }}
+
+      value={(this.props.field.isEmpty()?'':this.props.field.value.map(x=>x.value)) as any}
       inputComponent={SelectWrapped}
       inputProps={{
         simpleValue: false,
+        placeholder: '',
         classes: this.props.classes,
         field:this.props.field,
+        muiFormControl :this.muiFormControl
       }}
     />
   }
 }
 
-export const MultiSelect  = withStyles(styles)(InnerSelector);
+export const MultiSelect  = withStyles(styles as any)(InnerSelector);

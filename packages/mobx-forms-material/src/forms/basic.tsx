@@ -12,6 +12,9 @@ export interface IFormField {
   isValid(): boolean
   touch();
 }
+export interface IValidator<T> {
+  (v: T, owner: FormField<T>): string
+}
 
 export class FormBase implements IFormField, IFieldContainer {
   @observable fields: IFormField[] = [];
@@ -44,26 +47,6 @@ export class FormBase implements IFormField, IFieldContainer {
 }
 
 
-export abstract class FormRoot extends FormBase implements IFormField, IFieldContainer {
-  loader = new AsyncLoader();
-
-  constructor(parent: IFieldContainer) {
-    super(parent);
-    this.loader.wait(() => this.init());
-  }
-
-  protected async init(): Promise<any> {
-  }
-
-  render() {
-    this.loader.render(this.renderBody())
-  }
-  abstract renderBody();
-}
-
-export interface IValidator<T> {
-  (v: T, owner: FormField<T>): string
-}
 
 export interface FormFieldCfg<T> {
   defaultValue?: T,

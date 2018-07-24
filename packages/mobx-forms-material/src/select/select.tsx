@@ -1,6 +1,6 @@
 import * as  React from 'react';
 
-import { PropTypes } from 'prop-types'
+import * as PropTypes  from 'prop-types'
 import { Async } from 'react-select'
 import { observer } from 'mobx-react'
 import Chip from '@material-ui/core/Chip';
@@ -15,7 +15,7 @@ import { styles } from './styles';
 import Select from 'react-select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { toJS } from 'mobx';
-import { SelectField } from '@mobx-forms/mobx-forms-models/lib/select';
+import { SelectField } from './selectField';
 
 class Option extends React.Component<any, any> {
   handleClick = event => {
@@ -56,7 +56,7 @@ export class SelectWrapped extends React.Component<{ field: SelectField, classes
 
   updateDirty() {
     if (this.muiFormControl) {
-      if (this.props.field.getValueKey()) {
+      if (this.props.field.getValue()) {
         this.muiFormControl.onFilled();
       }
       else {
@@ -141,7 +141,7 @@ export class InnerSelector extends React.Component<{ field: SelectField, classes
 
   updateDirty() {
     if (this.muiFormControl) {
-      if (this.field.getValueKey()) {
+      if (this.field.getValue()) {
         this.muiFormControl.onFilled();
       }
       else {
@@ -154,7 +154,7 @@ export class InnerSelector extends React.Component<{ field: SelectField, classes
     return <Input
       fullWidth
       onChange={(v: any) => {      }}
-      value={this.field.getValueKey()?"any string":""}
+      value={this.field.getValue()?"any string":""}
       inputComponent={SelectWrapped}
       inputProps={{
         simpleValue: false,
@@ -167,4 +167,4 @@ export class InnerSelector extends React.Component<{ field: SelectField, classes
   }
 }
 
-export const Select = withStyles(styles as any)(InnerSelector);
+export const Select:any = withStyles(styles as any)(InnerSelector) as any;

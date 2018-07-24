@@ -23,6 +23,8 @@
         "./node_modules/ts-loader",
         "./node_modules/tslint",
         "./node_modules/react",
+		"./node_modules/@types/react",
+		"../../node_modules/@types/react/",
         "./node_modules/typescript"
     ],
     "compileOnSave": false,

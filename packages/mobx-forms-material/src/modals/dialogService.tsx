@@ -11,7 +11,7 @@ export function closeAllModals() {
 window["closeAllModals"] = closeAllModals;
 let lbNum = 0;
 
-export class ModalService {
+export class DialogService {
   static show<T>(cmp:IDialog<T>): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       let div = document.createElement("div");

@@ -10,8 +10,9 @@ export class StrField extends FormField<string> {
     super(parent, cfg);
   }
 
-  render(){
+  render() {
     return <TextField
+      fullWidth={true}
       error={this.visibleError!=null}
       label={this.displayName}
       value={this.value || ""}

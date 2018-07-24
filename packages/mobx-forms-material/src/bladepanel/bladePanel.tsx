@@ -1,3 +1,4 @@
+import Scrollbars from 'react-custom-scrollbars';
 import * as  React from 'react';
 import { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
@@ -17,13 +18,14 @@ class BladeMatchPanel {
 }
 
 interface BladeRouteCfg {
-  makeCmp: () => IComponent;
+  makeCmp: (params?) => IComponent;
   path: any;
-  style? : any;
-  title? : any;
+  style?: any;
+  title?: any;
 }
+
 interface InternalBladeRouteCfg extends BladeRouteCfg {
-  match:MatchRule
+  match: MatchRule
 }
 
 export function pushBlade(blade, history) {
@@ -47,10 +49,10 @@ export class BladePanel {
     return this._panels;
   }
 
-  addRoute(cfg:BladeRouteCfg) {
+  addRoute(cfg: BladeRouteCfg) {
     let path = cfg.path = "/" + trim(cfg.path, "/") + "/";
-    cfg.style = {minWidth:"400px",float:1,...cfg.style};
-    let inner = {...cfg,match: new MatchRule(path)};
+    cfg.style = { minWidth: "400px", float: 1, ...cfg.style };
+    let inner = { ...cfg, match: new MatchRule(path) };
     this.rules.push(inner);
   }
 
@@ -68,7 +70,7 @@ export class BladePanel {
           return m;
         }
       }
-      console.log(new Error("Unknown segment"));
+      console.log(new Error("Unknown segment " + segment));
     };
     return segments.map(x => getMatch(x)).filter(x => x);
   }
@@ -87,11 +89,11 @@ export class BladePanel {
     for (let i = 0; i < this.panels.length; i++) {
       const panel = this.panels[i];
       if (panel.cmp != afterCmp) {
-        newSegments.push(trim(panel.segment,"/"));
+        newSegments.push(trim(panel.segment, "/"));
       }
       else {
         found = true;
-        newSegments.push(trim(panel.segment,"/"));
+        newSegments.push(trim(panel.segment, "/"));
         break;
       }
     }
@@ -118,7 +120,8 @@ export class BladePanel {
     let validCount = 0;
     for (let i = 0; i < Math.min(matches.length, this._panels.length); i++) {
       const match = matches[i];
-      if (this._panels[i].route.path == match["path"]) {
+
+      if (this._panels[i].segment == match["segment"]) {
         validCount++;
         if (this._panels[i].cmp['updateParams']) {
           this._panels[i].cmp['updateParams'](match);
@@ -126,7 +129,7 @@ export class BladePanel {
       }
     }
 
-    let numberToPop = this._panels.length-validCount;
+    let numberToPop = this._panels.length - validCount;
 
     for (let i = 0; i < numberToPop; i++) {
       this._panels.pop();
@@ -136,7 +139,7 @@ export class BladePanel {
       let rule = this.rules.find(x => x.path == match.path);
       this._panels.push({
         route: rule,
-        cmp: rule.makeCmp(),
+        cmp: rule.makeCmp(match),
         params: match,
         collapsed: false,
         segment: match.segment
@@ -156,7 +159,7 @@ export class BladePanel {
     for (let i = 0; i < this.panels.length; i++) {
       const panel = this.panels[i];
       if (panel != e) {
-        newSegments.push(trim(panel.segment,"/"));
+        newSegments.push(trim(panel.segment, "/"));
       }
       else {
         found = true;
@@ -197,7 +200,8 @@ class PanelUi extends React.Component<{
       </div>;
     }
 
-    return <div className={"blade-panel " + "blade-panel-collapsed-" + x.collapsed} style={Object.assign({},x.cmp.bladeStyle,x.route.style)}>
+    return <div className={"blade-panel " + "blade-panel-collapsed-" + x.collapsed}
+                style={Object.assign({}, x.cmp['bladeStyle'], x.route.style)}>
       <div className="blade-panel-title">
         {this.getTitle(x)}
         <div className="blade-panel-icons">
@@ -218,13 +222,15 @@ class PanelUi extends React.Component<{
         </div>
       </div>
       <div className="blade-panel-body">
-        {x.cmp.render()}
+        <Scrollbars>
+          {x.cmp.render()}
+        </Scrollbars>
       </div>
     </div>
   }
 
   private getTitle(x: BladeMatchPanel) {
-    return (x.cmp["getTitle"] && x.cmp["getTitle"]()) || (x.route.title) ||"Untitled";
+    return (x.cmp["getTitle"] && x.cmp["getTitle"]()) || (x.route.title) || "Untitled";
   }
 }
 

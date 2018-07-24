@@ -2,12 +2,14 @@ import { observable } from 'mobx';
 import * as _ from "lodash";
 import { SelectValue } from '../forms/selections';
 import { FormField, FormFieldCfg, IFieldContainer } from '../forms/basic';
+import { MultiSelect } from './multiSelect';
+import * as React from 'react';
+import { FormControl, FormLabel, InputLabel } from '@material-ui/core';
 
 export interface MultiSelectFieldCfg<T extends SelectValue> extends FormFieldCfg<T[]> {
   getOptions: (query?: string) => Promise<T[]>;
   getOptionByKey?: (key: string) => Promise<T>;
 }
-
 
 export class MultiSelectFieldBase<T extends SelectValue> extends FormField<T[]> {
   getOptionByKey?: (key: string) => Promise<T>;
@@ -17,6 +19,7 @@ export class MultiSelectFieldBase<T extends SelectValue> extends FormField<T[]> 
     super(parent, cfg);
     this.getOptions = cfg.getOptions;
     this.getOptionByKey = cfg.getOptionByKey;
+    this.value = cfg.defaultValue as any || [];
   }
 
   optionByKey(getOption: (key: string) => Promise<T>) {
@@ -25,16 +28,17 @@ export class MultiSelectFieldBase<T extends SelectValue> extends FormField<T[]> 
   }
 
   async setValueKeys(keys: string[]): Promise<any> {
-    if (!keys)
+    if (!keys) {
       keys = [];
+    }
 
-    if (keys.length==0) {
+    if (keys.length == 0) {
       this.value = [];
       return;
     }
-    if (this.getOptionByKey){
+    if (this.getOptionByKey) {
       let v = [];
-      let list = keys.map(x=>this.getOptionByKey(x).then(z=>v.push(z)));
+      let list = keys.map(x => this.getOptionByKey(x).then(z => v.push(z)));
       await Promise.all(list);
       this.value = v;
     }
@@ -51,6 +55,17 @@ export class MultiSelectFieldBase<T extends SelectValue> extends FormField<T[]> 
       this.value = v;
     }
   }
+
+  isEmpty() {
+    return !this.value || this.value.length==0;
+  }
+  render() {
+    return <FormControl fullWidth={true}>
+      <InputLabel>label</InputLabel>
+      <MultiSelect field={this} classes={{}}/>
+    </FormControl>;
+  }
 }
-export class MultiSelectField extends MultiSelectFieldBase<SelectValue>{
+
+export class MultiSelectField extends MultiSelectFieldBase<SelectValue> {
 }

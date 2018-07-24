@@ -9,7 +9,7 @@ describe("Async loader ", function() {
     let asyncLoader = new AsyncLoader();
     asyncLoader.wait(()=>wait(1000));
     renderTestElement(asyncLoader.render(<div>Some content</div>));
-  })
+  });
 
   it("should show error.", function() {
     let asyncLoader = new AsyncLoader();

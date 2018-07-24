@@ -1,7 +1,12 @@
 import { observable } from 'mobx';
 import * as _ from "lodash";
+import * as React from "react";
 import { FormField, FormFieldCfg, IFieldContainer } from '../forms/basic';
 import { SelectValue } from '../forms/selections';
+import { Select } from './select';
+import { cmp } from '../common/ui-attr';
+import { InputLabel } from '@material-ui/core';
+import FormControl from '@material-ui/core/FormControl/FormControl';
 
 export interface SelectFieldCfg<T extends SelectValue> extends FormFieldCfg<T> {
   getOptions: (query?: string) => Promise<T[]>;
@@ -42,8 +47,15 @@ export class SelectFieldBase<T extends SelectValue> extends FormField<T> {
       return;
     }
   }
+
+
 }
-
+@cmp
 export class SelectField extends SelectFieldBase<SelectValue> {
-
+  render() {
+    return <FormControl fullWidth={true}>
+      <InputLabel>{this.displayName}</InputLabel>
+      <Select field={this} classes={{}}/>
+    </FormControl>;
+  }
 }
