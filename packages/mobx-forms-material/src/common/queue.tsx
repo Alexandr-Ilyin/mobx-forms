@@ -4,20 +4,14 @@ export class Queue {
 
   enqueue(p: () => any): Promise<any>;
   enqueue<T>(p: () => Promise<T>): Promise<T> {
+    let result = this.promise.then(() => p(), () => p())
     this.length++;
-    let result = this.promise.then(
-      () => p(),
-      () => p()
-    );
     this.promise = result.then(
       () => {
         this.length--;
-
       },
-      (err) => {
+      () => {
         this.length--;
-        console.log(err);
-        return Promise.reject(err);
       });
     return result;
   }

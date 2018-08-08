@@ -7,28 +7,39 @@ import { Select } from './select';
 import { cmp } from '../common/ui-attr';
 import { InputLabel } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl/FormControl';
+import { SelectFieldCfg } from './selectField';
 
-export interface SelectFieldCfg<T extends SelectValue> extends FormFieldCfg<T> {
-  getOptions: (query?: string) => Promise<T[]>;
-  getOptionByKey?: (key: string) => Promise<T>;
+export interface SelectFieldCfg<TKey, T> extends FormFieldCfg<T> {
+  getOptions?: (query?: string) => Promise<T[]>;
+  getOptionByKey?: (key: TKey) => Promise<T>;
+  getKey?: (t: T) => TKey;
+  getLabel?: (t: T) => string;
+
 }
 
-export class SelectFieldBase<T extends SelectValue> extends FormField<T> {
-  getOptionByKey?: (key: string) => Promise<T>;
+@cmp
+export class SelectField<TKey, T> extends FormField<T> {
   getOptions: (query?: string) => Promise<T[]>;
+  getKey: (t: T) => TKey;
+  getLabel: (t: T) => string;
+  getOptionByKey?: (key: TKey) => Promise<T>;
 
-  constructor(parent: IFieldContainer, cfg: SelectFieldCfg<T>) {
+  constructor(parent: IFieldContainer, cfg: SelectFieldCfg<TKey, T>) {
     super(parent, cfg);
     this.getOptions = cfg.getOptions;
     this.getOptionByKey = cfg.getOptionByKey;
+    this.getKey = cfg.getKey;
+    this.getLabel = cfg.getLabel;
   }
 
-  optionByKey(getOption: (key: string) => Promise<T>) {
-    this.getOptionByKey = getOption;
-    return this;
+  getValueKey(): TKey {
+    if (this.value) {
+      return this.getKey(this.value);
+    }
+    return null;
   }
 
-  async setValueKey(key: string): Promise<any> {
+  async setValueKey(key: TKey): Promise<any> {
     if (!key) {
       this.value = null;
       return;
@@ -38,7 +49,7 @@ export class SelectFieldBase<T extends SelectValue> extends FormField<T> {
     }
     else {
       let options = await this.getOptions();
-      let o = options.find(x => x.value == key);
+      let o = options.find(x => this.getKey(x) == key);
       if (o) {
         this.value = _.cloneDeep(o);
         return;
@@ -48,14 +59,29 @@ export class SelectFieldBase<T extends SelectValue> extends FormField<T> {
     }
   }
 
-
-}
-@cmp
-export class SelectField extends SelectFieldBase<SelectValue> {
   render() {
-    return <FormControl fullWidth={true}>
-      <InputLabel>{this.displayName}</InputLabel>
+    return <FormControl fullWidth={true} error={this.visibleError!=null} className={"field-hasError-"+(this.visibleError && true)}>
+      <InputLabel shrink={this.getValueKey()!=null}>{this.displayName}</InputLabel>
       <Select field={this} classes={{}}/>
     </FormControl>;
   }
+}
+
+export interface SelectFieldSimpleCfg<TKey> extends FormFieldCfg<SelectValue<TKey>> {
+  getOptions: (query?: string) => Promise<SelectValue<TKey>[]>;
+  getOptionByKey?: (key: TKey) => Promise<SelectValue<TKey>>;
+}
+
+export class SelectFieldSimple<TKey> extends SelectField<TKey, SelectValue<TKey>> {
+  constructor(parent: IFieldContainer, cfg: SelectFieldSimpleCfg<TKey>) {
+    super(parent, {
+      ...cfg,
+      getKey: (t: SelectValue<TKey>) => t.value,
+      getLabel: (t: SelectValue<TKey>) => t.label,
+    });
+  }
+}
+
+@cmp
+export class SelectFieldStr extends SelectFieldSimple<string> {
 }

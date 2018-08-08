@@ -12,6 +12,8 @@ export interface IEntityStore<T> {
     import(obj: T): T;
     addOrUpdate(newValues: T, o?: UpdateOptions): Promise<T>;
     getAllOfflines(): Promise<T[]>;
+    getCached(id: any): T;
+    getCachedOrLoad(id: any): T;
     getItem(id: any, fields?: string[]): Promise<T>;
     getItemsArray(ids: any[], fields?: string[]): Promise<T[]>;
     query(url: any, params?: any, force?: any): Promise<T[]>;
@@ -40,7 +42,7 @@ export interface EntityTypeCfg {
     props?: EntityPropCfg[];
 }
 export interface IOnlineStore<T> {
-    query(path: any, params: any, force: any): Promise<T[]>;
+    query(path: any, params: any, force?: any): Promise<T[]>;
     load(id: any, fields: string[]): Promise<T>;
     save(id: any, t: T, diff?: T): Promise<T>;
 }
@@ -59,7 +61,7 @@ export interface IOfflineStore<T> {
     isPersistent(): boolean;
 }
 export interface IStoreRegistrator {
-    register<T>(typeName: any, online: IOnlineStore<T>, offline: IOfflineStore<T>, log: ILogStorage<T>): IEntityStore<T>;
+    register<T>(typeName: any, online: IOnlineStore<T>, offline: IOfflineStore<T>, log?: ILogStorage<T>): IEntityStore<T>;
 }
 export interface IStoreConfiguration {
     types: EntityTypeCfg[];

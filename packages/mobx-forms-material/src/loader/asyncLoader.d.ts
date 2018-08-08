@@ -1,15 +1,13 @@
 /// <reference types="react" />
 import { Queue } from '../common/queue';
+import { AppEvent } from '../common/events';
 export declare class AsyncLoader {
-    loaded: boolean;
     loading: boolean;
-    starting: boolean;
-    error: any;
-    getter: () => any;
     queue: Queue;
-    constructor(loading?: boolean);
-    refresh(): Promise<any>;
-    wait<T>(promise: ((() => Promise<T>) | Promise<T>)): Promise<T>;
+    mustShowNotification: AppEvent<string>;
+    constructor();
+    wait<T>(promise: ((() => Promise<T>) | Promise<T>), notificationMsg?: any): Promise<T>;
+    showError(err: any): void;
     load(getter: () => any): Promise<any>;
     render(children: any): JSX.Element;
 }

@@ -6,6 +6,7 @@ import './tests/dialogTests';
 import './tests/bladesTests';
 import './tests/utilsTests';
 import './tests/listTests';
+import './tests/mergeTests';
 import * as history from 'history';
 let h = history.createHashHistory();
 (window as any)['_xx'] = bp1;

@@ -8,7 +8,7 @@ import { observable } from 'mobx';
 import { BladePanel } from '../bladepanel/bladePanel';
 import { trim } from '../common/utils';
 
-@cmp
+
 export class AppMenuItem {
   private text;
   private icon;

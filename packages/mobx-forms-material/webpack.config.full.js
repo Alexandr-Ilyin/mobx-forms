@@ -39,15 +39,15 @@ module.exports = function (isProduction, isHot) {
                     exclude: /node_modules/,
                     loader: 'ts-loader'
                 },
-				{
+                {
                     test: /\.(css|less|sass|scss)$/,
-				use: [
-					{
-						loader: MiniCssExtractPlugin.loader,
-					},
-					"css-loader"
-						]
-				},
+                    use: [
+                        {
+                            loader: MiniCssExtractPlugin.loader,
+                        },
+                        "css-loader"
+                    ]
+                },
                 /*{
                     test: /\.(css|less|sass|scss)$/,
                     use: ExtractTextPlugin.extract({
@@ -62,32 +62,36 @@ module.exports = function (isProduction, isHot) {
             ]
         },
         plugins: [
-            
+
             // new webpack.DllReferencePlugin({
             //     context: path.resolve(__dirname, "./assets-vendors"),
             //     manifest: require(path.resolve(__dirname, "./assets-vendors/vendors.json"))
             // }),
-			new MiniCssExtractPlugin({
-				filename: "[name].css",
-				chunkFilename: "[id].css"
-			}),
+            new MiniCssExtractPlugin({
+                filename: "[name].css",
+                chunkFilename: "[id].css"
+            }),
             function () {
                 this.plugin("done", function (stats) {
                     if (!isProduction)
                         return;
                     var assets = stats.toJson().assetsByChunkName;
-                    var result = _.reduce(assets, function(memo, item, key){
+                    var result = _.reduce(assets, function (memo, item, key) {
                         memo[key] = _.isArray(item) ? item : [item];
                         return memo;
-                    },{});
+                    }, {});
                     var assetFileNames = {};
-                    _.forEach(result, function(n,x){_.forEach(result[x], function(fName){assetFileNames[fName]=true})});
-                    _.forEach(fs.readdirSync(outputPath), function(fName){
+                    _.forEach(result, function (n, x) {
+                        _.forEach(result[x], function (fName) {
+                            assetFileNames[fName] = true
+                        })
+                    });
+                    _.forEach(fs.readdirSync(outputPath), function (fName) {
                         if (!/\.css$|\.js$/i.test(fName))
                             return;
                         if (!assetFileNames[fName])
-                            fs.unlinkSync(path.join(outputPath,fName));
-                        console.log("KIll " + path.join(outputPath,fName));
+                            fs.unlinkSync(path.join(outputPath, fName));
+                        console.log("KIll " + path.join(outputPath, fName));
                     });
                     require("fs").writeFileSync(path.join(outputPath, "/webpack-assets.json"), JSON.stringify(result));
                 });
@@ -96,6 +100,7 @@ module.exports = function (isProduction, isHot) {
         ],
         resolve: {
             extensions: ['.js', '.jsx', '.ts', '.tsx']
+
         }
     }
 };

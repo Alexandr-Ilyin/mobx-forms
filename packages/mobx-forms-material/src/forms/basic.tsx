@@ -1,6 +1,7 @@
 import { computed, observable} from 'mobx';
 import { removeArrayItem } from '../common/utils';
 import { AsyncLoader } from '../loader/asyncLoader';
+import { Validation } from './validators';
 
 export interface IFieldContainer {
   addField(field: IFormField)
@@ -47,8 +48,28 @@ export class FormBase implements IFormField, IFieldContainer {
 }
 
 
+export class ArrayField<T extends IFormField>  implements IFormField {
+  @observable items:T[] = [];
+
+  constructor(parent: FormBase) {
+    parent.fields.push(this);
+  }
+
+  add(field: IFormField) {
+    this.items.push(field as T);
+  }
+
+  isValid(): boolean {
+    return this.items.find(x => !x.isValid()) == null;
+  }
+
+  touch() {
+    this.items.forEach(x => x.touch());
+  }
+}
 
 export interface FormFieldCfg<T> {
+  required?: boolean,
   defaultValue?: T,
   validations?: IValidator<T>[]
   displayName?: string
@@ -68,15 +89,18 @@ export class FormField<T> implements IFormField {
       parent.addField(this as IFormField);
     }
     this.validators = cfg.validations || [];
+    if (cfg.required)
+      this.validators.push(Validation.required<T>());
     this.displayName = cfg.displayName || "";
     this.value = cfg.defaultValue || null;
+    
   }
 
   getValue(): T {
     return this.value;
   }
 
-  async setValue(vals: T): Promise<any> {
+  setValue(vals: T) {
     this.value = vals;
   }
 

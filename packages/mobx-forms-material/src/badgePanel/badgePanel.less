@@ -1,0 +1,73 @@
+.badgePanel-badgeItem-closed-true{
+  display: none;
+}
+.badgePanel{
+  position: relative;
+}
+.badgePanel-content{
+
+}
+.badgePanel-badges-bg-visible-true{
+
+}
+.badgePanel-badges-bg{
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: white;
+  opacity: 0;
+}
+.badgePanel-badges-bg-fadeIn{
+  opacity: 0.5;
+  transition: opacity;
+  transition-duration: 0.3s;
+}
+.badgePanel-badges-bg-fadeOut{
+  opacity: 0;
+  transition: opacity;
+  transition-duration: 0.3s;
+}
+.badgePanel-badgeItem{
+  display: inline-block;
+  align-self: center;
+  transform-origin:center;
+}
+.badgePanel-badgeItem{
+  transform:scaleY(0) scaleX(0);
+}
+.badgePanel-badges-fadeIn .badgePanel-badgeItem{
+  transform:scaleY(1) scaleX(1);
+}
+.badgePanel-badges-fadeOut .badgePanel-badgeItem{
+  transform:scaleY(0) scaleX(0);
+  overflow: hidden;
+}
+.badgePanel-badgeItem, .badgePanel-badges-fadeIn .badgePanel-badgeItem, .badgePanel-badges-fadeOut .badgePanel-badgeItem {
+  transition: transform;
+  transition-duration: 500ms;
+}
+
+.badgePanel-badges{
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+//------------------------
+.msg-badge{
+  font-size: 24px;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  background: white;
+  padding: 10px 40px;
+  border: 3px solid #3f51b5 ;
+  border-radius: 50px;
+  line-height: 50px;
+  opacity: 1;
+  vertical-align: middle;
+}

@@ -43,16 +43,16 @@ export class ErrorModal implements IDialog<any> {
   }
 
   render(ctx: DialogContext<any>) {
-    return <Dialog open={true}>
+    return <Dialog open={true} >
       <DialogTitle>Error</DialogTitle>
-      <DialogContent>
+      <DialogContent style={{minWidth:"340px"}}>
         <DialogContentText>
           {getErrorUi(this.err)}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={ctx.complete(null)} color="primary">
-          Cancel
+        <Button onClick={()=>ctx.complete(null)} color="primary">
+          Close
         </Button>
       </DialogActions>
     </Dialog>;

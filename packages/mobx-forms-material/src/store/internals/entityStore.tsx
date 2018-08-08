@@ -1239,6 +1239,19 @@ export class EntityStore<T> implements IReferenceStore<T> {
     });
   }
 
+  getCachedOrLoad(id): T {
+    if (id == null) {
+      return null;
+    }
+    const item = this.getOrCreate(id);
+    let values = item.getValues();
+    if (values !=null)
+      return values;
+    let somethingToListen = observable.box(1);
+    somethingToListen.get();//listen.
+    item.ensureLoaded().then(()=>somethingToListen.set(2));
+  }
+
   getCached(id): T {
     if (id == null) {
       return null;

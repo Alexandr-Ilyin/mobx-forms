@@ -7,6 +7,7 @@ require("./tests/dialogTests");
 require("./tests/bladesTests");
 require("./tests/utilsTests");
 require("./tests/listTests");
+require("./tests/mergeTests");
 const history = require("history");
 let h = history.createHashHistory();
 window['_xx'] = bp1;

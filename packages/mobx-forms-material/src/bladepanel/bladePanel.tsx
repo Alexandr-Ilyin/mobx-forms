@@ -22,6 +22,7 @@ interface BladeRouteCfg {
   path: any;
   style?: any;
   title?: any;
+  isDefault?: boolean;
 }
 
 interface InternalBladeRouteCfg extends BladeRouteCfg {
@@ -83,6 +84,26 @@ export class BladePanel {
     this.updatePanels(history.location.pathname);
   }
 
+  replace(segment, replaced) {
+    let newSegments = [];
+    let found = false;
+    for (let i = 0; i < this.panels.length; i++) {
+      const panel = this.panels[i];
+      if (panel.cmp != replaced) {
+        newSegments.push(trim(panel.segment, "/"));
+      }
+      else {
+        found = true;
+        break;
+      }
+    }
+    newSegments.push(segment);
+    this.push(newSegments.join("/"));
+    if (!found) {
+      console.log("after BladePanel not found ", afterCmp);
+    }
+  }
+
   pushAfter(segment, afterCmp) {
     let newSegments = [];
     let found = false;
@@ -118,6 +139,13 @@ export class BladePanel {
   updatePanels(path) {
     let matches = this.getMatches(path);
     let validCount = 0;
+    if (matches.length==0)
+    {
+      let defaultRule = this.rules.find(x => x.isDefault);
+      if (defaultRule) {
+        matches = this.getMatches('/b/' + trim(defaultRule.path,'/') +'/be/');
+      }
+    }
     for (let i = 0; i < Math.min(matches.length, this._panels.length); i++) {
       const match = matches[i];
 
@@ -128,9 +156,7 @@ export class BladePanel {
         }
       }
     }
-
     let numberToPop = this._panels.length - validCount;
-
     for (let i = 0; i < numberToPop; i++) {
       this._panels.pop();
     }
@@ -145,6 +171,7 @@ export class BladePanel {
         segment: match.segment
       });
     }
+
   }
 
   render() {

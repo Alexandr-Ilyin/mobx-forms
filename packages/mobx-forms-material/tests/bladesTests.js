@@ -117,10 +117,10 @@ describe("Blades", function () {
                 this.userName = new strField_1.StrField(this, { displayName: "Name" });
                 this.lastName = new strField_1.StrField(this, { displayName: "Last name", validations: [validators_1.Validation.required()] });
                 this.birthdaty = new dateField_1.DateField(this, { displayName: "Birthday" });
-                this.options = new multiSelectField_1.MultiSelectField(this, {
+                this.options = new multiSelectField_1.MultiSelectFieldStr(this, {
                     displayName: "Options",
                     validations: [validators_1.Validation.required()],
-                    getOptions: getOptions
+                    getOptions: getOptions,
                 });
             }
             renderActions() {

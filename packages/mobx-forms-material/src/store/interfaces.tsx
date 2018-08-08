@@ -14,6 +14,8 @@ export interface IEntityStore<T> {
   import(obj: T): T;
   addOrUpdate(newValues: T, o?: UpdateOptions):Promise<T>;
   getAllOfflines(): Promise<T[]>;
+  getCached(id): T;
+  getCachedOrLoad(id): T;
   getItem(id, fields?: string[]): Promise<T>;
   getItemsArray(ids: any[], fields?: string[]): Promise<T[]>
   query(url, params?, force?): Promise<T[]>
@@ -46,7 +48,7 @@ export interface EntityTypeCfg {
 }
 
 export interface IOnlineStore<T> {
-  query(path, params, force): Promise<T[]>;
+  query(path, params, force?): Promise<T[]>;
   load(id, fields: string[]): Promise<T>;
   save(id, t: T, diff?: T): Promise<T>;
 }
@@ -72,7 +74,7 @@ export interface IStoreRegistrator
   register<T>(typeName,
               online :IOnlineStore<T>,
               offline:IOfflineStore<T>,
-              log: ILogStorage<T>):IEntityStore<T>
+              log?: ILogStorage<T>):IEntityStore<T>
 }
 
 export interface IStoreConfiguration{

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { SelectField } from './selectField';
-export declare class SelectWrapped extends React.Component<{
-    field: SelectField;
+export declare class SelectWrapped<TKey, TObj> extends React.Component<{
+    field: SelectField<TKey, TObj>;
     classes: any;
     placeholder: any;
 }, any> {
@@ -14,7 +14,7 @@ export declare class SelectWrapped extends React.Component<{
     };
     muiFormControl: any;
     constructor(props: {
-        field: SelectField;
+        field: SelectField<TKey, TObj>;
         classes: any;
         placeholder: any;
         muiFormControl: any;
@@ -23,8 +23,8 @@ export declare class SelectWrapped extends React.Component<{
     updateDirty(): void;
     render(): JSX.Element;
 }
-export declare class InnerSelector extends React.Component<{
-    field: SelectField;
+export declare class InnerSelector<TKey, T> extends React.Component<{
+    field: SelectField<TKey, T>;
     classes: any;
     placeholder?: any;
 }, any> {
@@ -35,13 +35,18 @@ export declare class InnerSelector extends React.Component<{
         muiFormControl: PropTypes.Requireable<any>;
     };
     muiFormControl: any;
-    field: SelectField;
+    field: SelectField<TKey, T>;
     constructor(props: {
-        field: SelectField;
+        field: SelectField<TKey, T>;
         classes: any;
     }, context: any);
     componentDidMount(): void;
     updateDirty(): void;
+    componentWillReceiveProps(nextProps: Readonly<{
+        field: SelectField<TKey, T>;
+        classes: any;
+        placeholder?: any;
+    }>, nextContext: any): void;
     render(): JSX.Element;
 }
 export declare const Select: any;

@@ -64,17 +64,19 @@ function SelectWrapped(props) {
     <Async
         //isLoading={this.props.field.loader.loading || undefined}
         async={true} cache={{}} loadOptions={(query,cb)=>{
-          Promise.resolve().then(()=>props.field.getOptions('')).then(res=>{
-            cb(null, {options:res})
+          Promise.resolve().then(()=>props.field.getOptions(query)).then(res=>{
+            cb(null, {options:res.map(x=>({
+                label:props.field.getLabel(x),
+                value:props.field.getKey(x),
+                obj : x
+              }))})
           }, err=>{
             console.log(err);
           });
         }}
         onChange={e=>{
-          debugger
           this.props.field.touch();
-
-          this.props.field.value=e;
+          this.props.field.value=e.map(x=>x.obj);
         }}
         multi={true}
         value={props.field.value}
@@ -89,7 +91,7 @@ function SelectWrapped(props) {
 }
 
 @observer
-export class InnerSelector extends React.Component<{field: MultiSelectField, classes}, any> {
+export class InnerSelector<TKey,T> extends React.Component<{field: MultiSelectField<TKey, T>, classes}, any> {
   static contextTypes = { muiFormControl: PropTypes.object };
   static childContextTypes = { muiFormControl: PropTypes.object };
   private muiFormControl: any;
@@ -118,11 +120,13 @@ export class InnerSelector extends React.Component<{field: MultiSelectField, cla
     return <Input
       fullWidth
       onChange={(v:any)=>{
-        this.props.field.setValue(v);
+        if (!v)
+          v = [];
+        this.props.field.setValue(v.map(x=>x.obj));
         this.updateDirty()
       }}
 
-      value={(this.props.field.isEmpty()?'':this.props.field.value.map(x=>x.value)) as any}
+      value={(this.props.field.isEmpty()?'':this.props.field.getValueKeys() as any)}
       inputComponent={SelectWrapped}
       inputProps={{
         simpleValue: false,

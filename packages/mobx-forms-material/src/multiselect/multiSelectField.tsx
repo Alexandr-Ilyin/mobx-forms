@@ -5,29 +5,35 @@ import { FormField, FormFieldCfg, IFieldContainer } from '../forms/basic';
 import { MultiSelect } from './multiSelect';
 import * as React from 'react';
 import { FormControl, FormLabel, InputLabel } from '@material-ui/core';
+import { SelectField } from '../select/selectField';
+import { cmp } from '../common/ui-attr';
 
-export interface MultiSelectFieldCfg<T extends SelectValue> extends FormFieldCfg<T[]> {
+export interface MultiSelectFieldCfg<TKey, T> extends FormFieldCfg<T[]> {
   getOptions: (query?: string) => Promise<T[]>;
-  getOptionByKey?: (key: string) => Promise<T>;
+  getOptionByKey?: (key: TKey) => Promise<T>;
+  getKey: (t: T) => TKey;
+  getLabel: (t: T) => string;
+
 }
 
-export class MultiSelectFieldBase<T extends SelectValue> extends FormField<T[]> {
-  getOptionByKey?: (key: string) => Promise<T>;
+export class MultiSelectField<TKey, T> extends FormField<T[]> {
+  getOptionByKey?: (key: TKey) => Promise<T>;
   getOptions: (query?: string) => Promise<T[]>;
+  getKey: (t: T) => TKey;
+  getLabel: (t: T) => string;
 
-  constructor(parent: IFieldContainer, cfg: MultiSelectFieldCfg<T>) {
+  constructor(parent: IFieldContainer, cfg: MultiSelectFieldCfg<TKey, T>) {
     super(parent, cfg);
     this.getOptions = cfg.getOptions;
     this.getOptionByKey = cfg.getOptionByKey;
     this.value = cfg.defaultValue as any || [];
-  }
+    this.getKey = cfg.getKey;
+    this.getLabel = cfg.getLabel;  }
 
-  optionByKey(getOption: (key: string) => Promise<T>) {
-    this.getOptionByKey = getOption;
-    return this;
+  getValueKeys(): TKey[] {
+    return this.value.map(x=>this.getKey(x));
   }
-
-  async setValueKeys(keys: string[]): Promise<any> {
+  async setValueKeys(keys: TKey[]): Promise<any> {
     if (!keys) {
       keys = [];
     }
@@ -47,7 +53,7 @@ export class MultiSelectFieldBase<T extends SelectValue> extends FormField<T[]> 
       let v = [];
       for (let i = 0; i < keys.length; i++) {
         let key = keys[i];
-        let o = options.find(x => x.value == key);
+        let o = options.find(x => this.getKey(x)== key);
         if (o) {
           v.push(_.cloneDeep(o));
         }
@@ -60,12 +66,28 @@ export class MultiSelectFieldBase<T extends SelectValue> extends FormField<T[]> 
     return !this.value || this.value.length==0;
   }
   render() {
-    return <FormControl fullWidth={true}>
-      <InputLabel>label</InputLabel>
+    return <FormControl fullWidth={true} error={this.visibleError} className={"field-hasError-"+(this.visibleError && true)}    >
+      <InputLabel>{this.displayName}</InputLabel>
       <MultiSelect field={this} classes={{}}/>
     </FormControl>;
   }
 }
 
-export class MultiSelectField extends MultiSelectFieldBase<SelectValue> {
+export interface MultiSelectFieldSimpleCfg<TKey> extends FormFieldCfg<SelectValue<TKey>[]> {
+  getOptions: (query?: string) => Promise<SelectValue<TKey>[]>;
+  getOptionByKey?: (key: TKey) => Promise<SelectValue<TKey>>;
+}
+
+export class MultiSelectFieldSimple<TKey> extends MultiSelectField<TKey, SelectValue<TKey>> {
+  constructor(parent: IFieldContainer, cfg: MultiSelectFieldSimpleCfg<TKey>) {
+    super(parent, {
+      ...cfg,
+      getKey: (t: SelectValue<TKey>) => t.value,
+      getLabel: (t: SelectValue<TKey>) => t.label,
+    });
+  }
+}
+
+@cmp
+export class MultiSelectFieldStr extends MultiSelectFieldSimple<string> {
 }

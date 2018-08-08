@@ -1,10 +1,10 @@
 import { observable } from 'mobx';
 
-export class SelectValue {
-  constructor(label?: string, value?: string) {
+export class SelectValue<TKey> {
+  constructor(label?: string, value?: TKey) {
     this.label = label;
     this.value = value;
   }
-  @observable label: string;
-  @observable value: string;
+  label: string;
+  value: TKey;
 }

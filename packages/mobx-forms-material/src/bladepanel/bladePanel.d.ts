@@ -12,6 +12,7 @@ interface BladeRouteCfg {
     path: any;
     style?: any;
     title?: any;
+    isDefault?: boolean;
 }
 export declare function pushBlade(blade: any, history: any): void;
 export declare class BladePanel {
@@ -22,6 +23,7 @@ export declare class BladePanel {
     addRoute(cfg: BladeRouteCfg): void;
     private getMatches;
     connectToHistory(history: any): void;
+    replace(segment: any, replaced: any): void;
     pushAfter(segment: any, afterCmp: any): void;
     push(path: any): void;
     updatePanels(path: any): void;

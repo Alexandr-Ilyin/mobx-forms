@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react';
 import * as React from 'react';
 
+let __cmpId = 0;
 export function cmp(target) {
   let wrapped = target.prototype.render;
 
@@ -10,12 +11,16 @@ export function cmp(target) {
       return wrapped.apply(this.props.owner, this.props.args);
     }
   }
+
+
   if (target['name'])
     CMP['displayName'] = target['name'];
 
   target.prototype.render = function() {
     let args = arguments;
-    return <CMP owner={this} args={args}/>;
+    if (this['__cmpId'])
+      this['__cmpId'] ='CMP'+ __cmpId++;
+    return <CMP owner={this} args={args} key={this.__cmpId}/>;
   }
 }
 

@@ -5,7 +5,6 @@ import * as assert from 'assert';
 import equal = assert.equal;
 
 describe("Dialogs", function() {
-
   it("should show and return results.", async function() {
     class Simple implements IDialog<string> {
       render(ctx: DialogContext<string>) {

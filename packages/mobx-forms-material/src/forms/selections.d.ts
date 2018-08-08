@@ -1,5 +1,5 @@
-export declare class SelectValue {
-    constructor(label?: string, value?: string);
+export declare class SelectValue<TKey> {
+    constructor(label?: string, value?: TKey);
     label: string;
-    value: string;
+    value: TKey;
 }

@@ -17,7 +17,7 @@ import { CardForm } from '../src/cardForm/cardForm';
 import { BladeAppLayout } from '../src/bladeAppLayout/bladeAppLayout';
 import { Inbox } from '@material-ui/icons';
 import { PeopleOutline } from '@material-ui/icons';
-import { MultiSelectField } from '../src/multiselect/multiSelectField';
+import { MultiSelectFieldStr } from '../src/multiselect/multiSelectField';
 import { DateField } from '../src/dateField';
 
 let h = history.createHashHistory();
@@ -110,10 +110,10 @@ describe("Blades", function() {
       userName = new StrField(this, { displayName: "Name" });
       lastName = new StrField(this, { displayName: "Last name", validations: [Validation.required() as any] });
       birthdaty = new DateField(this, { displayName: "Birthday"});
-      options = new MultiSelectField(this, {
+      options = new MultiSelectFieldStr(this, {
         displayName: "Options",
         validations: [Validation.required() as any],
-        getOptions:getOptions
+        getOptions:getOptions,
       });
 
 

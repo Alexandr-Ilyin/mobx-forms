@@ -182,6 +182,7 @@ export declare class EntityStore<T> implements IReferenceStore<T> {
     import(obj: T): T;
     getAllOfflines(): Promise<T[]>;
     __getAllOfflines(): Promise<void>;
+    getCachedOrLoad(id: any): T;
     getCached(id: any): T;
     getItem(id: any, fields?: string[]): Promise<T>;
     getChanges(onlyFinal?: any): Promise<T[]>;

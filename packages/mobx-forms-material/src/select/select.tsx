@@ -1,6 +1,5 @@
 import * as  React from 'react';
-
-import * as PropTypes  from 'prop-types'
+import * as PropTypes from 'prop-types'
 import { Async } from 'react-select'
 import { observer } from 'mobx-react'
 import Chip from '@material-ui/core/Chip';
@@ -40,14 +39,14 @@ class Option extends React.Component<any, any> {
 }
 
 @observer
-export class SelectWrapped extends React.Component<{ field: SelectField, classes, placeholder }, any> {
+export class SelectWrapped<TKey, TObj> extends React.Component<{ field: SelectField<TKey, TObj>, classes, placeholder }, any> {
   static contextTypes = { muiFormControl: PropTypes.object };
   static childContextTypes = { muiFormControl: PropTypes.object };
   muiFormControl: any;
 
-  constructor(props: { field: SelectField; classes; placeholder, muiFormControl }, context: any) {
+  constructor(props: { field: SelectField<TKey, TObj>; classes; placeholder, muiFormControl }, context: any) {
     super(props, context);
-    this.muiFormControl = props.muiFormControl || context.muiFormControl ;
+    this.muiFormControl = props.muiFormControl || context.muiFormControl;
   }
 
   componentDidMount(): void {
@@ -91,45 +90,60 @@ export class SelectWrapped extends React.Component<{ field: SelectField, classes
         return <div className="Select-value">{children}</div>;
       }
     }
+    let newVar = arrowProps => { return arrowProps.isOpen ? (<ArrowDropUpIcon/>) : (<ArrowDropDownIcon/>); };
+    let nv2 = () => <ClearIcon/>;
+    let v = props.field.value ?
+      {
+        label: props.field.getLabel(props.field.value),
+        value: props.field.getKey(props.field.value),
+        obj: props.field.value
+      } : null;
+
     return (
       <Async
         //isLoading={this.props.field.loader.loading || undefined}
         async={true} cache={{}} loadOptions={(query, cb) => {
-        Promise.resolve().then(() => props.field.getOptions('')).then(res => {
-          cb(null, { options: res })
+        Promise.resolve().then(() => props.field.getOptions(query)).then(res => {
+          cb(null, {
+            options: res.map(o => ({
+              label: props.field.getLabel(o),
+              value: props.field.getKey(o),
+              obj: o
+            }))
+          })
         }, err => {
           console.log(err);
         });
       }}
         multi={false}
+        loadingPlaceholder={''}
         placeholder={props.placeholder || ''}
         optionComponent={Option}
         noResultsText={<Typography>{'No results found'}</Typography>}
-        arrowRenderer={arrowProps => { return arrowProps.isOpen ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>; }}
-        clearRenderer={() => <ClearIcon/>}
-        //valueComponent={valueProps => renderValue(valueProps)}
+        arrowRenderer={newVar}
+        clearRenderer={nv2}
         {...other}
-        value={props.field.value}
+        value={v}
         onChange={e => {
           this.props.field.touch();
-          this.props.field.value = e;
+
+          this.props.field.value = e ? e.obj : null;
           this.updateDirty();
         }}
 
       />
     );
   }
-
 }
 
 @observer
-export class InnerSelector extends React.Component<{ field: SelectField, classes, placeholder? }, any> {
+export class InnerSelector<TKey, T> extends React.Component<{ field: SelectField<TKey, T>, classes, placeholder? }, any> {
   static contextTypes = { muiFormControl: PropTypes.object };
   static childContextTypes = { muiFormControl: PropTypes.object };
   muiFormControl: any;
-  field: SelectField;
+  field: SelectField<TKey, T>;
 
-  constructor(props: { field: SelectField; classes }, context: any) {
+  constructor(props: { field: SelectField<TKey, T>; classes }, context: any) {
     super(props, context);
     this.muiFormControl = context.muiFormControl;
     this.field = props.field;
@@ -140,6 +154,7 @@ export class InnerSelector extends React.Component<{ field: SelectField, classes
   }
 
   updateDirty() {
+
     if (this.muiFormControl) {
       if (this.field.getValue()) {
         this.muiFormControl.onFilled();
@@ -150,21 +165,21 @@ export class InnerSelector extends React.Component<{ field: SelectField, classes
     }
   }
 
-  render() {
-    return <Input
-      fullWidth
-      onChange={(v: any) => {      }}
-      value={this.field.getValue()?"any string":""}
-      inputComponent={SelectWrapped}
-      inputProps={{
-        simpleValue: false,
-        classes: this.props.classes,
-        field: this.props.field,
-        placeholder: this.props.placeholder || '',
-        muiFormControl :this.muiFormControl
-      }}
-    />
+  componentWillReceiveProps(nextProps: Readonly<{ field: SelectField<TKey, T>; classes; placeholder? }>, nextContext: any): void {
+    //this.updateDirty();
   }
-}
 
-export const Select:any = withStyles(styles as any)(InnerSelector) as any;
+  render() {
+    let ip = {
+      simpleValue: false,
+      classes: this.props.classes,
+      field: this.props.field,
+      placeholder: this.props.placeholder || '',
+      muiFormControl: this.muiFormControl
+    };
+    let v = this.field.getValue() ? "any string" : "";
+    return <Input      fullWidth      onChange={(v: any) => { }}      value={v}      inputComponent={SelectWrapped}      inputProps={ip}    />
+    }
+  }
+
+  export const Select: any = withStyles(styles as any)(InnerSelector) as any;

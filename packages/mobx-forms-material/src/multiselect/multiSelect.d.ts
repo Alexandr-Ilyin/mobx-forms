@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { MultiSelectField } from './multiSelectField';
 import * as PropTypes from 'prop-types';
-export declare class InnerSelector extends React.Component<{
-    field: MultiSelectField;
+export declare class InnerSelector<TKey, T> extends React.Component<{
+    field: MultiSelectField<TKey, T>;
     classes: any;
 }, any> {
     static contextTypes: {
@@ -17,4 +17,4 @@ export declare class InnerSelector extends React.Component<{
     updateDirty(): void;
     render(): JSX.Element;
 }
-export declare const MultiSelect: React.ComponentType<import("../../../../node_modules/@material-ui/core").Overwrite<any, import("../../../../node_modules/@material-ui/core/styles/withStyles").StyledComponentProps<string>>>;
+export declare const MultiSelect: React.ComponentType<import("@material-ui/core").Overwrite<any, import("@material-ui/core/styles/withStyles").StyledComponentProps<string>>>;
