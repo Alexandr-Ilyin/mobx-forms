@@ -1,7 +1,6 @@
 /// <reference types="react" />
 import { IComponent } from '../common/ui-attr';
 import { AsyncLoader } from '../loader/asyncLoader';
-import { Queue } from '../common/queue';
 export declare class Column<T> {
     title: any;
     format: (v: T) => any;
@@ -26,7 +25,7 @@ export interface DataBatch<T> {
     totalCount?: number;
 }
 export interface ListSourceCfg<T> {
-    getData(skip: any, take: any): Promise<DataBatch<T>>;
+    getData: (skip: any, take: any) => Promise<DataBatch<T>>;
 }
 export declare class List<T> {
     loader: AsyncLoader;
@@ -37,7 +36,8 @@ export declare class List<T> {
     page: number;
     rowsPerPage: number;
     count: number;
-    queue: Queue;
+    v: number;
+    _onRowClick: any;
     private source;
     constructor();
     setSource(source: ListSourceCfg<T>): Promise<void>;
@@ -45,6 +45,7 @@ export declare class List<T> {
     addFilter(f: IComponent): void;
     onFilterChanged(): void;
     addRowAction(a: ListAction<T>): void;
+    onRowClick(a: (t: T) => any): void;
     addColumn(title: any, format: (t: T) => any): void;
     render(): JSX.Element;
     private handleChangePage;

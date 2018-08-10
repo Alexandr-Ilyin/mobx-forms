@@ -10,7 +10,7 @@ export class MatchRule {
       path.replace(/\{.*?\}/g,v=>{
         this.names.push(v.substring(1,v.length-1));
         return "(.*?)";})
-    );
+    ,"i");
   }
 
   getMatchParams(segment: any) {

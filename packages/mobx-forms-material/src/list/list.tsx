@@ -14,6 +14,7 @@ import { AsyncLoader } from '../loader/asyncLoader';
 import { StrField } from '../strField';
 import { Grid } from '@material-ui/core';
 import { Queue } from '../common/queue';
+import { wait } from '../store/internals/entityStore';
 
 @cmp
 export class Column<T> {
@@ -60,7 +61,7 @@ export interface DataBatch<T> {
 }
 
 export interface ListSourceCfg<T> {
-  getData(skip, take): Promise<DataBatch<T>>;
+  getData:(skip, take)=> Promise<DataBatch<T>>;
 }
 
 @cmp
@@ -74,7 +75,8 @@ export class List<T> {
   @observable page = 0;
   @observable rowsPerPage = 25;
   @observable count = 0;
-  @observable queue = new Queue();
+  @observable v = 0;
+  @observable _onRowClick;
   private source: ListSourceCfg<T>;
 
   constructor() {
@@ -88,16 +90,14 @@ export class List<T> {
   }
 
   async updateData() {
-    await this.queue.enqueue(() => {
-      if (this.queue.length > 1) {
+    this.v++;
+    let v = this.v;
+    return this.loader.wait(async () => {
+      let data = await this.source.getData(this.page * this.rowsPerPage, this.rowsPerPage);
+      if (v != this.v)
         return;
-      }
-
-      return this.loader.wait(async () => {
-        let data = await this.source.getData(this.page * this.rowsPerPage, this.rowsPerPage);
-        this.data = data.items;
-        this.count = data.totalCount;
-      });
+      this.data = data.items;
+      this.count = data.totalCount;
     });
   }
 
@@ -129,6 +129,9 @@ export class List<T> {
     this.actions.push(a);
   }
 
+  onRowClick(a:(t: T) => any) {
+    this._onRowClick = a;
+  }
   addColumn(title, format: (t: T) => any) {
     this.columns.push(new Column<T>(title, format));
   }
@@ -152,11 +155,12 @@ export class List<T> {
                 <TableCell/>
               </TableRow>
             </TableHead>
-
             {this.data.map(n => {
               return (
                 <TableBody>
-                  <TableRow key={n.id}>
+                  <TableRow key={n.id}
+                            className={"list-row list-row-selectable-"+(this._onRowClick!=null)}
+                            onClick={this._onRowClick==null ? null : ()=>this._onRowClick(n)}>
                     {this.columns.map(c => <TableCell>{c.format(n)}</TableCell>)}
                     <TableCell padding="none">
                       {this.actions.map((x) => x.renderCell(n))}

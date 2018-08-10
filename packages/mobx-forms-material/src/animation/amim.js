@@ -48,7 +48,6 @@ let AnimatedItemWrapper = class AnimatedItemWrapper extends React.Component {
                 return;
             }
             let currentClassName = domNode.className.split(' ')[0];
-            console.log("update DOM! r:" + this.props.removed);
             if (this.props.removed) {
                 utils_1.addClass(domNode, currentClassName + "-" + exitSuffix);
             }
@@ -70,7 +69,6 @@ class AnimatedItemsWrapper extends React.Component {
         this.children = [];
         let newChildren = this.getChildren();
         this.children = newChildren;
-        console.log('c!');
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.propsAreEqual(this.props.children, prevProps.children)) {
@@ -78,9 +76,10 @@ class AnimatedItemsWrapper extends React.Component {
         }
         let newChildren = this.getChildren();
         let isChanged = false;
-        let merged = merge(this.children, newChildren, function (x) {
+        let merged = merge(this.children, newChildren, (x) => {
             isChanged = true;
-            return x.removed = true;
+            x.removed = true;
+            setTimeout(() => { utils_1.removeArrayItem(x, this.children); }, 1500);
         }, () => {
             return isChanged = true;
         }, (o, n) => {

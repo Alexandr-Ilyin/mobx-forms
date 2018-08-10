@@ -89,8 +89,8 @@ exports.styles = theme => ({
         '.Select-arrow-zone, .Select-clear-zone': {
             color: theme.palette.action.active,
             cursor: 'pointer',
-            height: 21,
-            width: 21,
+            height: 19,
+            width: 19,
             zIndex: 1,
         },
         '.Select-aria-only': {

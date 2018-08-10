@@ -12,49 +12,33 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { AppEvent } from '../common/events';
 import { addClass, removeClass } from '../common/utils';
 import { wait } from '../store/internals/entityStore';
-
-
-
+import { BadgePanel } from '../badgePanel/badgePanel';
+import { ErrorContainer } from '../errorContainer/errorContainer';
 
 @cmp
 export class AsyncLoader {
-  @observable loading: boolean;
-  queue = new Queue();
-  mustShowNotification: AppEvent<string>;
+  badgePanel = new BadgePanel();
 
-  constructor() {
-    this.mustShowNotification = new AppEvent<string>();
+  wait<T>(promise: (()=>Promise<T>)|Promise<T>, notificationMsg?): Promise<T> {
+    if (typeof promise!='function')
+      return this.waitPromise(promise as Promise<T>, notificationMsg);
+    else
+      return this.waitPromise(Promise.resolve().then(promise), notificationMsg);
   }
 
   @trackAsync()
-  wait<T>(promise: ((() => Promise<T>) | Promise<T>), notificationMsg?): Promise<T> {
-    let wrappedPromise: any = promise;
-    if (typeof promise != "function") {
-      wrappedPromise = () => slowUiPromise(promise as any);
-    }
-    else {
-      wrappedPromise = () => slowUiPromise(promise()) as any;
-    }
-
-    this.loading = true;
-    return this.queue.enqueue(wrappedPromise as any).then((x) => {
-      if (this.queue.isEmpty()) {
-        this.loading = false;
+  waitPromise<T>(promise: Promise<T>, notificationMsg?): Promise<T> {
+    let slowPromise = this.badgePanel.addLoading(slowUiPromise<T>(promise));
+    return slowPromise.then((x) => {
+      if (notificationMsg) {
+        return this.badgePanel.addMessage(notificationMsg, wait(1000)).then(()=>x);
       }
       return x;
     }, err => {
-      if (this.queue.isEmpty()) {
-        this.loading = false;
-      }
       if (err != 'cancel') {
         this.showError(err);
       }
       return Promise.reject(err);
-    }).then((x) => {
-      if (notificationMsg) {
-        this.mustShowNotification.trigger(notificationMsg);
-      }
-      return x;
     });
   }
 
@@ -64,108 +48,14 @@ export class AsyncLoader {
     DialogService.show(new ErrorModal(err));
   }
 
-  @trackAsync()
-  load(getter: () => any): Promise<any> {
-    this.getter = getter;
-    this.loading = true;
-    return this.refresh();
-  }
-
   render(children) {
-    return <AsyncLoaderUI loader={this}>{children}</AsyncLoaderUI>;
+    return <ErrorContainer>{this.badgePanel.render(
+      {children:children})}
+      </ErrorContainer>;
   }
 }
 
-@observer
-class AsyncLoaderUI extends React.Component<{
-    loader: AsyncLoader,
-    className?: string,
-  }, any> {
-
-  msgCtr = React.createRef() as any;
-  msgRef = React.createRef() as any;
-  private unmounted: boolean;
-  private msgNum = 1;
-
-  constructor(props) {
-    super(props);
-    this.state = { error: null, errorInfo: null };
-  }
-
-  componentDidCatch(error, info) {
-    this.setState({
-      error: error,
-      errorInfo: info
-    });
-  }
-
-  componentDidMount(): void {
-    this.props.loader.mustShowNotification.listen((msg) => {
-      if (this.unmounted) {
-        return;
-      }
-      this.msgNum++;
-      let msgNum = this.msgNum;
-      this.msgRef.current.innerHTML = '<div class="async-loader__msg_text">' + msg + '</div>';
-      removeClass(this.msgRef.current, "async-loader__msg_closed");
-      addClass(this.msgRef.current, "async-loader__msg_visible");
-      addClass(this.msgCtr.current, "async-loader__msgContainer-withMsg");
-
-      setTimeout(() => {
-        if (this.unmounted) {
-          return;
-        }
-        if (this.msgNum != msgNum) {
-          return;
-        }
-        removeClass(this.msgCtr.current, "async-loader__msgContainer-withMsg");
-      }, 2000);
-
-      setTimeout(() => {
-        if (this.unmounted) {
-          return;
-        }
-        if (this.msgNum != msgNum) {
-          return;
-        }
-        addClass(this.msgRef.current, "async-loader__msg_closed");
-      }, 400);
-    });
-  }
-
-  componentWillUnmount(): void {
-    console.log("LOADER-UNLISTEN");
-    this.unmounted = true;
-  }
-
-  render() {
-    if (this.state.error) {
-      return <div>
-        <h1 className="text-center">Something went wrong</h1>
-        <details style={{ whiteSpace: "pre-wrap" }}>
-          {this.state.error && this.state.error.toString()}
-          <br/>
-          {this.state.errorInfo.componentStack}
-        </details>
-      </div>;
-    }
-
-    const { className, loader, children } = this.props;
-    const loaderEl = <CircularProgress size={80} className={"async-loader_spinner"}/>;
-    return <div className={"async-loader host " + (className || "")} data-ft={this.props["data-ft"]}>
-      <div className="async-loader__content" key="content">{children}</div>
-      <div ref={this.msgCtr}
-           className={"async-loader__msgContainer async-loader__msgContainer-loading-" + loader.loading + " async-loader__msgContainer-error-" + (loader.error && true)}>
-        <div className="async-loader__msg" ref={this.msgRef}/>
-        {loader.error && <div className="load-error">{getErrorUi(this.props.loader.error)}</div>}
-        {loader.loading && !loader.error && loaderEl}
-      </div>
-    </div>;
-
-  }
-}
-
-function slowUiPromise(p) {
+function slowUiPromise<T>(p) :Promise<T>{
   return new Promise((resolve, reject) => {
     let isFinished = false;
     let isFail = false;

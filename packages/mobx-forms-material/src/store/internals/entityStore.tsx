@@ -1,6 +1,5 @@
 import * as  _  from "lodash";
 import * as  diff  from "fast-diff";
-
 import { Progress } from './progress';
 import { observable, extras} from 'mobx';
 import { lazy } from './api.common';

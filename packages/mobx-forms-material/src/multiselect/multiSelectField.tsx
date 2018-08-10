@@ -66,7 +66,7 @@ export class MultiSelectField<TKey, T> extends FormField<T[]> {
     return !this.value || this.value.length==0;
   }
   render() {
-    return <FormControl fullWidth={true} error={this.visibleError} className={"field-hasError-"+(this.visibleError && true)}    >
+    return <FormControl fullWidth={true} error={this.visibleError!=null} className={"field-hasError-"+(this.visibleError && true)}    >
       <InputLabel>{this.displayName}</InputLabel>
       <MultiSelect field={this} classes={{}}/>
     </FormControl>;

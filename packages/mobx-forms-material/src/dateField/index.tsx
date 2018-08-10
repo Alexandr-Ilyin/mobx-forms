@@ -23,7 +23,6 @@ export class DateField extends FormField<string> {
       onChange={(e:any)=> {
         this.touch();
         this.value = e.target.value;
-      }}
-      margin="normal"/>
+      }}/>
   }
 }

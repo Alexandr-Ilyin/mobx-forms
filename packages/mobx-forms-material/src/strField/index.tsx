@@ -20,6 +20,6 @@ export class StrField extends FormField<string> {
         this.touch();
         this.value = e.target.value;
       }}
-      margin="normal"/>
+      />
   }
 }

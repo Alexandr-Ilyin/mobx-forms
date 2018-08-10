@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { addClass, removeClass } from '../common/utils';
+import { addClass, removeArrayItem, removeClass } from '../common/utils';
 import { observable } from 'mobx';
 import { observer } from 'mobx-react';
 
@@ -41,9 +41,7 @@ class AnimatedItemWrapper extends React.Component<any, any> {
         return;
       }
       let currentClassName = domNode.className.split(' ')[0];
-      console.log("update DOM! r:" + this.props.removed);
       if (this.props.removed) {
-        //removeClass(domNode, currentClassName + "-" + enterSuffix);
         addClass(domNode, currentClassName + "-" + exitSuffix);
       } else {
         removeClass(domNode, currentClassName + "-" + exitSuffix);
@@ -63,7 +61,6 @@ class AnimatedItemsWrapper extends React.Component<any, any> {
     super(props, context);
     let newChildren = this.getChildren();
     this.children = newChildren;
-    console.log('c!');
   }
 
   componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
@@ -73,9 +70,10 @@ class AnimatedItemsWrapper extends React.Component<any, any> {
     let newChildren = this.getChildren();
     let isChanged = false;
 
-    let merged = merge(this.children, newChildren, function(x) {
+    let merged = merge(this.children, newChildren, (x)=> {
       isChanged = true;
-      return x.removed = true;
+      x.removed = true;
+      setTimeout(() => {removeArrayItem(x, this.children)}, 1500);
     }, () => {
       return isChanged = true;
     }, (o, n) => {
@@ -96,7 +94,7 @@ class AnimatedItemsWrapper extends React.Component<any, any> {
     if (c && c['length'] === undefined) {
       c = [c];
     }
-    return (c || []).map(x => new Child(x, x.key));
+    return ((c as any) || []).map(x => new Child(x, x.key));
   }
 
   render() {

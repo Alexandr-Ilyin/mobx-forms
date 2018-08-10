@@ -11,7 +11,7 @@ export abstract class CardForm extends FormBase implements IFormField, IFieldCon
 
   constructor(parent: IFieldContainer) {
     super(parent);
-    this.loader.wait(() => this.init());
+    setTimeout(()=>this.loader.wait(this.init()));
   }
 
   protected async init(): Promise<any> {

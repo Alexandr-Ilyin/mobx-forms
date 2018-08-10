@@ -58,7 +58,7 @@ export class BadgePanel {
   addBadge<T>(b: Badge, p: Promise<T>): Promise<T> {
     let badgeState = new BadgeState(b, this.badgeNum++);
     this.badges.push(badgeState);
-    let current = this.badges.find(x => x.visible && !x.closed);
+    let current = this.badges.find(x => x.visible);
     if (!current) {
       badgeState.visible = true;
     }
@@ -66,7 +66,8 @@ export class BadgePanel {
     let onFinished = () => {
       removeArrayItem(badgeState, this.badges);
       let next = this.badges.find(x => x.num >= badgeState.num && !x.visible);
-      next.visible = true;
+      if (next)
+        next.visible = true;
     };
     p.then(onFinished, onFinished);
     return p;

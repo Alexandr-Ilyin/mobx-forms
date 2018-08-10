@@ -92,8 +92,8 @@ export class FormField<T> implements IFormField {
     if (cfg.required)
       this.validators.push(Validation.required<T>());
     this.displayName = cfg.displayName || "";
-    this.value = cfg.defaultValue || null;
-    
+    this.value = cfg.defaultValue;
+
   }
 
   getValue(): T {

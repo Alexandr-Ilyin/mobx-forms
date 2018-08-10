@@ -31,7 +31,6 @@ const TableRow_1 = require("@material-ui/core/TableRow");
 const TableHead_1 = require("@material-ui/core/TableHead");
 const asyncLoader_1 = require("../loader/asyncLoader");
 const core_1 = require("@material-ui/core");
-const queue_1 = require("../common/queue");
 let Column = class Column {
     constructor(title, format, options) {
         if (!options) {
@@ -76,7 +75,7 @@ let List = class List {
         this.page = 0;
         this.rowsPerPage = 25;
         this.count = 0;
-        this.queue = new queue_1.Queue();
+        this.v = 0;
         this.onFilterChanged = _.debounce(this.onFilterChanged.bind(this), 1000);
     }
     setSource(source) {
@@ -87,16 +86,15 @@ let List = class List {
     }
     updateData() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.queue.enqueue(() => {
-                if (this.queue.length > 1) {
+            this.v++;
+            let v = this.v;
+            return this.loader.wait(() => __awaiter(this, void 0, void 0, function* () {
+                let data = yield this.source.getData(this.page * this.rowsPerPage, this.rowsPerPage);
+                if (v != this.v)
                     return;
-                }
-                return this.loader.wait(() => __awaiter(this, void 0, void 0, function* () {
-                    let data = yield this.source.getData(this.page * this.rowsPerPage, this.rowsPerPage);
-                    this.data = data.items;
-                    this.count = data.totalCount;
-                }));
-            });
+                this.data = data.items;
+                this.count = data.totalCount;
+            }));
         });
     }
     addFilter(f) {
@@ -122,6 +120,9 @@ let List = class List {
     addRowAction(a) {
         this.actions.push(a);
     }
+    onRowClick(a) {
+        this._onRowClick = a;
+    }
     addColumn(title, format) {
         this.columns.push(new Column(title, format));
     }
@@ -138,7 +139,7 @@ let List = class List {
                         React.createElement(TableCell_1.default, null))),
                 this.data.map(n => {
                     return (React.createElement(TableBody_1.default, null,
-                        React.createElement(TableRow_1.default, { key: n.id },
+                        React.createElement(TableRow_1.default, { key: n.id, className: "list-row list-row-selectable-" + (this._onRowClick != null), onClick: this._onRowClick == null ? null : () => this._onRowClick(n) },
                             this.columns.map(c => React.createElement(TableCell_1.default, null, c.format(n))),
                             React.createElement(TableCell_1.default, { padding: "none" }, this.actions.map((x) => x.renderCell(n))))));
                 }),
@@ -190,7 +191,11 @@ __decorate([
 __decorate([
     mobx_1.observable,
     __metadata("design:type", Object)
-], List.prototype, "queue", void 0);
+], List.prototype, "v", void 0);
+__decorate([
+    mobx_1.observable,
+    __metadata("design:type", Object)
+], List.prototype, "_onRowClick", void 0);
 List = __decorate([
     ui_attr_1.cmp,
     __metadata("design:paramtypes", [])

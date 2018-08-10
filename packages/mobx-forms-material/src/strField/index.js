@@ -21,7 +21,7 @@ let StrField = class StrField extends basic_1.FormField {
         return React.createElement(TextField_1.default, { fullWidth: true, error: this.visibleError != null, label: this.displayName, value: this.value || "", onChange: (e) => {
                 this.touch();
                 this.value = e.target.value;
-            }, margin: "normal" });
+            } });
     }
 };
 StrField = __decorate([

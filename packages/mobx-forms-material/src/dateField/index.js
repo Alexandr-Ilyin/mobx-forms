@@ -23,7 +23,7 @@ let DateField = class DateField extends basic_1.FormField {
             }, onChange: (e) => {
                 this.touch();
                 this.value = e.target.value;
-            }, margin: "normal" });
+            } });
     }
 };
 DateField = __decorate([

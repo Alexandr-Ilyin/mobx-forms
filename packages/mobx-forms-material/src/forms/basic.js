@@ -73,7 +73,7 @@ class FormField {
         if (cfg.required)
             this.validators.push(validators_1.Validation.required());
         this.displayName = cfg.displayName || "";
-        this.value = cfg.defaultValue || null;
+        this.value = cfg.defaultValue;
     }
     getValue() {
         return this.value;

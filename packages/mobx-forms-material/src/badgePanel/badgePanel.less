@@ -18,6 +18,7 @@
   right: 0;
   background: white;
   opacity: 0;
+  display: block;
 }
 .badgePanel-badges-bg-fadeIn{
   opacity: 0.5;
@@ -26,14 +27,28 @@
 }
 .badgePanel-badges-bg-fadeOut{
   opacity: 0;
-  transition: opacity;
-  transition-duration: 0.3s;
+  transition: opacity 0.3s, bottom 0s ease 5000ms;
+  display: none;
+  bottom : 0%;
 }
 .badgePanel-badgeItem{
   display: inline-block;
   align-self: center;
   transform-origin:center;
 }
+.badgePanel-badges{
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  max-width: 10000px;
+  max-height: 10000px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .badgePanel-badgeItem{
   transform:scaleY(0) scaleX(0);
 }
@@ -44,21 +59,17 @@
   transform:scaleY(0) scaleX(0);
   overflow: hidden;
 }
+.badgePanel-badges-fadeOut{
+  max-width: 0px;
+  max-height: 0px;
+  transition: max-height 0s ease 1000ms,max-width 0s 1000ms;
+}
 .badgePanel-badgeItem, .badgePanel-badges-fadeIn .badgePanel-badgeItem, .badgePanel-badges-fadeOut .badgePanel-badgeItem {
   transition: transform;
   transition-duration: 500ms;
 }
 
-.badgePanel-badges{
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
+
 //------------------------
 .msg-badge{
   font-size: 24px;

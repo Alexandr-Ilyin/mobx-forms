@@ -26,7 +26,6 @@ const Grid_1 = require("@material-ui/core/Grid");
 const multiSelectField_1 = require("../src/multiselect/multiSelectField");
 const selectField_1 = require("../src/select/selectField");
 const boolField_1 = require("../src/boolField/boolField");
-const assert = require("assert");
 var equal = assert.equal;
 let getOptions = (query) => __awaiter(this, void 0, void 0, function* () {
     return [

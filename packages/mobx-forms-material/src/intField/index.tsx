@@ -21,7 +21,6 @@ export class IntField extends FormField<number> {
         this.touch();
         let value = parseInt(e.target.value,10);
         this.value = isNaN(value) ? null : value;
-      }}
-      margin="normal"/>
+      }}/>
   }
 }

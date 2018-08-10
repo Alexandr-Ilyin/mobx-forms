@@ -1,6 +1,5 @@
 import { renderTestElement } from '../testRunner/utils/testHelper';
-import { AsyncLoader } from '../src/loader/asyncLoader';
-import { wait, wait } from '../src/store/internals/entityStore';
+import { wait } from '../src/store/internals/entityStore';
 import * as React from 'react';
 import {observer} from 'mobx-react';
 import { StrField } from '../src/strField';
@@ -11,7 +10,6 @@ import Grid from '@material-ui/core/Grid';
 import { MultiSelectField, MultiSelectFieldSimple, MultiSelectFieldStr } from '../src/multiselect/multiSelectField';
 import { SelectField, SelectFieldSimple, SelectFieldStr } from '../src/select/selectField';
 import { BoolField } from '../src/boolField/boolField';
-import * as assert from 'assert';
 import equal = assert.equal;
 
 let getOptions = async (query) => [

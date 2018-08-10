@@ -22,7 +22,7 @@ let IntField = class IntField extends basic_1.FormField {
                 this.touch();
                 let value = parseInt(e.target.value, 10);
                 this.value = isNaN(value) ? null : value;
-            }, margin: "normal" });
+            } });
     }
 };
 IntField = __decorate([

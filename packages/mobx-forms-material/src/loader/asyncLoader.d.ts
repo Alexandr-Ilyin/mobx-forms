@@ -1,13 +1,9 @@
 /// <reference types="react" />
-import { Queue } from '../common/queue';
-import { AppEvent } from '../common/events';
+import { BadgePanel } from '../badgePanel/badgePanel';
 export declare class AsyncLoader {
-    loading: boolean;
-    queue: Queue;
-    mustShowNotification: AppEvent<string>;
-    constructor();
-    wait<T>(promise: ((() => Promise<T>) | Promise<T>), notificationMsg?: any): Promise<T>;
+    badgePanel: BadgePanel;
+    wait<T>(promise: (() => Promise<T>) | Promise<T>, notificationMsg?: any): Promise<T>;
+    waitPromise<T>(promise: Promise<T>, notificationMsg?: any): Promise<T>;
     showError(err: any): void;
-    load(getter: () => any): Promise<any>;
     render(children: any): JSX.Element;
 }

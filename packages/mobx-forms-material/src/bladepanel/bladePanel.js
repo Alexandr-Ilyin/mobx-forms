@@ -91,7 +91,7 @@ let BladePanel = class BladePanel {
         newSegments.push(segment);
         this.push(newSegments.join("/"));
         if (!found) {
-            console.log("after BladePanel not found ", afterCmp);
+            console.log("replaced item not found ", replaced);
         }
     }
     pushAfter(segment, afterCmp) {

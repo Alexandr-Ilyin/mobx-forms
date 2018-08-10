@@ -19,7 +19,7 @@ class CardForm extends basic_1.FormBase {
     constructor(parent) {
         super(parent);
         this.loader = new asyncLoader_1.AsyncLoader();
-        this.loader.wait(() => this.init());
+        setTimeout(() => this.loader.wait(this.init()));
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {

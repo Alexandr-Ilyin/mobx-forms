@@ -7,23 +7,23 @@ const React = require("react");
 describe("Async loader ", function () {
     it("should show loading.", function () {
         let asyncLoader = new asyncLoader_1.AsyncLoader();
-        asyncLoader.wait(() => entityStore_1.wait(1000));
+        asyncLoader.wait(entityStore_1.wait(1000));
         testHelper_1.renderTestElement(asyncLoader.render(React.createElement("div", null, "Some content")));
     });
     it("should show error.", function () {
         let asyncLoader = new asyncLoader_1.AsyncLoader();
-        asyncLoader.wait(() => entityStore_1.wait(1000).then(() => Promise.reject(new Error("Bad.."))));
+        asyncLoader.wait(entityStore_1.wait(1000).then(() => Promise.reject(new Error("Bad.."))));
         testHelper_1.renderTestElement(asyncLoader.render(React.createElement("div", null, "Some content")));
     });
     it("should show content when loading.", function () {
         let asyncLoader = new asyncLoader_1.AsyncLoader();
-        asyncLoader.wait(() => entityStore_1.wait(100));
+        asyncLoader.wait(entityStore_1.wait(100));
         testHelper_1.renderTestElement(asyncLoader.render(React.createElement("div", { style: { minHeight: "400px" } }, "Some content")));
-        asyncLoader.wait(() => new Promise((a, b) => { }));
+        asyncLoader.wait(new Promise((a, b) => { }));
     });
     it("should show msg when loaded.", function () {
         let asyncLoader = new asyncLoader_1.AsyncLoader();
-        asyncLoader.wait(() => entityStore_1.wait(1000), "Some message");
+        asyncLoader.wait(entityStore_1.wait(1000), "Some message");
         testHelper_1.renderTestElement(asyncLoader.render(React.createElement("div", null, "Some content")));
     });
 });

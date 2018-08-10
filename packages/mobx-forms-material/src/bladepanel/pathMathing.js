@@ -7,7 +7,7 @@ class MatchRule {
         this.re = new RegExp(path.replace(/\{.*?\}/g, v => {
             this.names.push(v.substring(1, v.length - 1));
             return "(.*?)";
-        }));
+        }), "i");
     }
     getMatchParams(segment) {
         let m = this.re.exec(segment);

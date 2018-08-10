@@ -65,7 +65,7 @@ class MultiSelectField extends basic_1.FormField {
         return !this.value || this.value.length == 0;
     }
     render() {
-        return React.createElement(core_1.FormControl, { fullWidth: true, error: this.visibleError, className: "field-hasError-" + (this.visibleError && true) },
+        return React.createElement(core_1.FormControl, { fullWidth: true, error: this.visibleError != null, className: "field-hasError-" + (this.visibleError && true) },
             React.createElement(core_1.InputLabel, null, this.displayName),
             React.createElement(multiSelect_1.MultiSelect, { field: this, classes: {} }));
     }
