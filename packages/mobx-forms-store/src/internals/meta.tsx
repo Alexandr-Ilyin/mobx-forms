@@ -52,9 +52,9 @@ export class EntityMetaProvider {
   private ctors = {};
   private lazyCtors = {};
 
-  constructor(metas: EntityTypeMeta[]) {
-    this.metas = metas.reduce((x, v) => {
-      x[v.typeName] = v;
+  constructor(types:EntityTypeCfg[]) {
+    this.metas = types.reduce((x, v) => {
+      x[v.typeName] = new EntityTypeMeta(v);
       return x;
     }, {});
   }

@@ -21,8 +21,8 @@ export interface IOfflineStorageManager {
   dispose();
 }
 
-export function initStores(stores: EntityStore<any>[]): Promise<IOfflineStorageManager> {
-  let metaProvider = new EntityMetaProvider(stores.map(x => x.type));
+export function initStores(stores: EntityStore<any>[],types:EntityTypeCfg[]): Promise<IOfflineStorageManager> {
+  let metaProvider = new EntityMetaProvider(types);
   let offlineSaver = new OfflineChangesSaver();
 
    stores.forEach(x=>x.initialize(metaProvider));

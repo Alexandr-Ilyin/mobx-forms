@@ -1,3 +1,4 @@
+import { EntityTypeCfg } from './interfaces';
 import { EntityStore } from './internals/entityStore';
 export interface IOfflineStorageManager {
     waitSaveFinished(): Promise<void>;
@@ -6,4 +7,4 @@ export interface IOfflineStorageManager {
     setSaveDelay(v: any): any;
     dispose(): any;
 }
-export declare function initStores(stores: EntityStore<any>[]): Promise<IOfflineStorageManager>;
+export declare function initStores(stores: EntityStore<any>[], types: EntityTypeCfg[]): Promise<IOfflineStorageManager>;

@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mobx_1 = require("mobx");
 const meta_1 = require("./internals/meta");
 const offlines_1 = require("./internals/offlines");
-function initStores(stores) {
-    let metaProvider = new meta_1.EntityMetaProvider(stores.map(x => x.type));
+function initStores(stores, types) {
+    let metaProvider = new meta_1.EntityMetaProvider(types);
     let offlineSaver = new offlines_1.OfflineChangesSaver();
     stores.forEach(x => x.initialize(metaProvider));
     stores.forEach(x => offlineSaver.addSaveFunc((throwOnError, progress) => x.pushChangesToServer(throwOnError, progress)));

@@ -35,12 +35,12 @@ class EntityPropMeta extends EntityPropCfg {
 }
 exports.EntityPropMeta = EntityPropMeta;
 class EntityMetaProvider {
-    constructor(metas) {
+    constructor(types) {
         this.stores = {};
         this.ctors = {};
         this.lazyCtors = {};
-        this.metas = metas.reduce((x, v) => {
-            x[v.typeName] = v;
+        this.metas = types.reduce((x, v) => {
+            x[v.typeName] = new EntityTypeMeta(v);
             return x;
         }, {});
     }

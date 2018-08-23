@@ -27,7 +27,7 @@ export declare class EntityMetaProvider {
     stores: {};
     private ctors;
     private lazyCtors;
-    constructor(metas: EntityTypeMeta[]);
+    constructor(types: EntityTypeCfg[]);
     addMeta(m: EntityTypeMeta): void;
     getType(typeName: string): EntityTypeMeta;
     getIdField(typeName: any): string;
