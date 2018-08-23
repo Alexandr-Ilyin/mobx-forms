@@ -18,12 +18,12 @@ const DialogContentText_1 = require("@material-ui/core/DialogContentText");
 const DialogTitle_1 = require("@material-ui/core/DialogTitle");
 const ui_attr_1 = require("../common/ui-attr");
 const offlineIcon_1 = require("./offlineIcon");
-const entityStore_1 = require("../store/internals/entityStore");
+const offlines_1 = require("../common/offlines");
 function getErrorUi(error) {
     if (!error) {
         return null;
     }
-    if (entityStore_1.isOfflineError(error)) {
+    if (offlines_1.isOfflineError(error)) {
         return React.createElement(offlineIcon_1.OfflineErrorIcon, null);
     }
     if (typeof (error) === "string") {

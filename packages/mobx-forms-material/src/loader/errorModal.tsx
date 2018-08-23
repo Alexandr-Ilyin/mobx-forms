@@ -10,7 +10,7 @@ import { DialogContext, IDialog } from '../modals/dialogService';
 import { observer } from 'mobx-react';
 import { cmp } from '../common/ui-attr';
 import { OfflineErrorIcon } from './offlineIcon';
-import { isOfflineError } from '../store/internals/entityStore';
+import { isOfflineError } from '../common/offlines';
 
 export function getErrorUi(error) {
   if (!error) {

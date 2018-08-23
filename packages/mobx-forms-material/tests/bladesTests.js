@@ -26,13 +26,13 @@ const history = require("history");
 const strField_1 = require("../src/strField");
 const list_1 = require("../src/list/list");
 const validators_1 = require("../src/forms/validators");
-const entityStore_1 = require("../src/store/internals/entityStore");
 const cardForm_1 = require("../src/cardForm/cardForm");
 const bladeAppLayout_1 = require("../src/bladeAppLayout/bladeAppLayout");
 const icons_1 = require("@material-ui/icons");
 const icons_2 = require("@material-ui/icons");
 const multiSelectField_1 = require("../src/multiselect/multiSelectField");
 const dateField_1 = require("../src/dateField");
+const wait_1 = require("../src/common/wait");
 let h = history.createHashHistory();
 let getOptions = (query) => __awaiter(this, void 0, void 0, function* () {
     return [
@@ -160,7 +160,7 @@ describe("Blades", function () {
                 list.addFilter(q);
                 list.setSource({
                     getData: (t, s) => __awaiter(this, void 0, void 0, function* () {
-                        yield entityStore_1.wait(800);
+                        yield wait_1.wait(800);
                         return {
                             items: arr.filter(x => x.lastName.indexOf(q.value || '') >= 0).slice(t, t + s),
                             totalCount: arr.length

@@ -14,9 +14,9 @@ const ui_attr_1 = require("../common/ui-attr");
 const dialogService_1 = require("../modals/dialogService");
 const errorModal_1 = require("./errorModal");
 const trackAsync_1 = require("../common/trackAsync");
-const entityStore_1 = require("../store/internals/entityStore");
 const badgePanel_1 = require("../badgePanel/badgePanel");
 const errorContainer_1 = require("../errorContainer/errorContainer");
+const wait_1 = require("../common/wait");
 let AsyncLoader = class AsyncLoader {
     constructor() {
         this.badgePanel = new badgePanel_1.BadgePanel();
@@ -31,7 +31,7 @@ let AsyncLoader = class AsyncLoader {
         let slowPromise = this.badgePanel.addLoading(slowUiPromise(promise));
         return slowPromise.then((x) => {
             if (notificationMsg) {
-                return this.badgePanel.addMessage(notificationMsg, entityStore_1.wait(1000)).then(() => x);
+                return this.badgePanel.addMessage(notificationMsg, wait_1.wait(1000)).then(() => x);
             }
             return x;
         }, err => {
@@ -112,5 +112,5 @@ function slowPromise(p, time) {
     if (time === 0) {
         return Promise.resolve().then(() => p);
     }
-    return entityStore_1.wait(time).then(() => p);
+    return wait_1.wait(time).then(() => p);
 }

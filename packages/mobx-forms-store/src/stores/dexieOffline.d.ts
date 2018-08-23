@@ -1,0 +1,30 @@
+import { IOfflineStore } from '../interfaces';
+import { Queue } from '../utils/queue';
+import { ILazyWrapper } from '../utils/lazy';
+import { OfflineDataItem } from '../internals/entityStore';
+import { DexieWithSchema } from './dexieUtils';
+import { EntityMetaProvider } from '../internals/meta';
+export declare const isUpdatedField = "isUpdated";
+export declare class DexieOffline<T> implements IOfflineStore<T> {
+    private tableName;
+    private currentBatch;
+    private dexie;
+    _writeQueue: Queue;
+    _waitQueue: Queue;
+    wrapper: ILazyWrapper;
+    constructor(tableName: any, dexie: DexieWithSchema);
+    initialize(typeName: any, metaProvider: EntityMetaProvider): void;
+    isPersistent(): boolean;
+    getAllChanges(): Promise<OfflineDataItem<T>[]>;
+    private log;
+    getAll(): Promise<OfflineDataItem<T>[]>;
+    where(field: any, value: any): Promise<OfflineDataItem<T>[]>;
+    find(id: any): Promise<OfflineDataItem<T>>;
+    set(id: any, t: OfflineDataItem<T>): Promise<void>;
+    writeBatched(item: OfflineDataItem<T>): Promise<void>;
+    private writeItemsArrayPrivate;
+    private saveLazyIfMissing;
+    wrapStoredItemLazies(item: OfflineDataItem<T>): void;
+    private unwrapLazy;
+    private getKeys;
+}

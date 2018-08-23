@@ -57,6 +57,26 @@ export class BladePanel {
     this.rules.push(inner);
   }
 
+  
+  closeBlade(closed) {
+    let newSegments = [];
+    let found = false;
+    for (let i = 0; i < this.panels.length; i++) {
+      const panel = this.panels[i];
+      if (panel.cmp != closed) {
+        newSegments.push(trim(panel.segment, "/"));
+      }
+      else {
+        found = true;
+        break;
+      }
+    }
+    this.push(newSegments.join("/"));
+    if (!found) {
+      console.log("closed item not found ", closed);
+    }
+  }
+
   private getMatches(path) {
     let bladesPath = /\/b\/(.*)\/be\//.exec(path);
     if (!bladesPath) {

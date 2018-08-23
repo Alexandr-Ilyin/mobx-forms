@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as  ReactDOM from "react-dom";
-import { Defer } from '../store/internals/entityStore';
+import { Defer } from '../common/defer';
+
 
 let killModals = [];
 

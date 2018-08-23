@@ -1,6 +1,5 @@
 import { renderTestElement } from '../testRunner/utils/testHelper';
 import { AsyncLoader } from '../src/loader/asyncLoader';
-import { wait } from '../src/store/internals/entityStore';
 import * as React from 'react';
 import { StrField } from '../src/strField';
 import { cmp } from '../src/common/ui-attr';
@@ -10,6 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import { MultiSelectField } from '../src/multiselect/multiSelectField';
 import { SelectField } from '../src/select/selectField';
 import { List, ListActions } from '../src/list/list';
+import { wait } from '../src/common/wait';
 
 class User{
   name: string

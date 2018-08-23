@@ -23,5 +23,4 @@ export function trackAsync() {
     let wrapped = target[propertyKey];
     descriptor.value = target[propertyKey] = runTrackAsync(wrapped);
   };
-
 }

@@ -8,3 +8,4 @@ packages/mobx-forms-material/.idea/*
 **/.cache/
 packages/mobx-forms-models/.idea/*
 packages/mobx-forms-tests/dist/*
+packages/mobx-forms-store/.jest-cache/*

@@ -50,6 +50,24 @@ let BladePanel = class BladePanel {
         let inner = Object.assign({}, cfg, { match: new pathMathing_1.MatchRule(path) });
         this.rules.push(inner);
     }
+    closeBlade(closed) {
+        let newSegments = [];
+        let found = false;
+        for (let i = 0; i < this.panels.length; i++) {
+            const panel = this.panels[i];
+            if (panel.cmp != closed) {
+                newSegments.push(utils_1.trim(panel.segment, "/"));
+            }
+            else {
+                found = true;
+                break;
+            }
+        }
+        this.push(newSegments.join("/"));
+        if (!found) {
+            console.log("closed item not found ", closed);
+        }
+    }
     getMatches(path) {
         let bladesPath = /\/b\/(.*)\/be\//.exec(path);
         if (!bladesPath) {

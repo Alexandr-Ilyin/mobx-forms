@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const testHelper_1 = require("../testRunner/utils/testHelper");
-const entityStore_1 = require("../src/store/internals/entityStore");
 const strField_1 = require("../src/strField");
 const list_1 = require("../src/list/list");
+const wait_1 = require("../src/common/wait");
 class User {
 }
 ;
@@ -34,7 +34,7 @@ describe("Lists", function () {
             list.addFilter(query);
             yield list.setSource({
                 getData: (t, s) => __awaiter(this, void 0, void 0, function* () {
-                    yield entityStore_1.wait(800);
+                    yield wait_1.wait(800);
                     return { items: arr.filter(x => x.lastName.indexOf(query.value || '') >= 0).slice(t, t + s), totalCount: arr.length };
                 })
             });

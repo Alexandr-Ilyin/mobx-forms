@@ -1,5 +1,5 @@
 import { renderTestElement } from '../testRunner/utils/testHelper';
-import { wait } from '../src/store/internals/entityStore';
+
 import * as React from 'react';
 import {observer} from 'mobx-react';
 import { StrField } from '../src/strField';
@@ -11,6 +11,7 @@ import { MultiSelectField, MultiSelectFieldSimple, MultiSelectFieldStr } from '.
 import { SelectField, SelectFieldSimple, SelectFieldStr } from '../src/select/selectField';
 import { BoolField } from '../src/boolField/boolField';
 import equal = assert.equal;
+import { wait } from '../src/common/wait';
 
 let getOptions = async (query) => [
   { label: "Option A", value: "A" },

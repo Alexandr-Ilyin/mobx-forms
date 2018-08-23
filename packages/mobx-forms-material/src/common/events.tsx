@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { guid } from '../store/internals/entityStore';
+import { guid } from './guid';
 
 export class AppEvent<T> {
   name: string;

@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { trim } from '../src/common/utils';
 import { AsyncLoader } from '../src/loader/asyncLoader';
-import { wait } from '../src/store/internals/entityStore';
+
 import { Queue } from '../src/common/queue';
 import { BadgePanel } from '../src/badgePanel/badgePanel';
 import { renderTestElement } from '../testRunner/utils/testHelper';
 import { merge } from '../src/animation/amim';
 import * as assert from 'assert';
+import { wait } from '../src/common/wait';
 
 describe("Utils", function() {
   it("check trim.", function() {

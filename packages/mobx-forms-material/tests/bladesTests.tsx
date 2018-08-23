@@ -12,13 +12,14 @@ import { StrField } from '../src/strField';
 import { List, ListActions } from '../src/list/list';
 import { Validation } from '../src/forms/validators';
 import { FormBase } from '../src/forms/basic';
-import { wait } from '../src/store/internals/entityStore';
+
 import { CardForm } from '../src/cardForm/cardForm';
 import { BladeAppLayout } from '../src/bladeAppLayout/bladeAppLayout';
 import { Inbox } from '@material-ui/icons';
 import { PeopleOutline } from '@material-ui/icons';
 import { MultiSelectFieldStr } from '../src/multiselect/multiSelectField';
 import { DateField } from '../src/dateField';
+import { wait } from '../src/common/wait';
 
 let h = history.createHashHistory();
 let getOptions = async (query) => [

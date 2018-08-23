@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ReactDOM = require("react-dom");
-const entityStore_1 = require("../store/internals/entityStore");
+const defer_1 = require("../common/defer");
 let killModals = [];
 function closeAllModals() {
     killModals.forEach(x => x());
@@ -21,7 +21,7 @@ class DialogService {
                 console.log("REMOVED LIGHTBOX!");
             };
             let closeFunc = (r) => {
-                let def = new entityStore_1.Defer();
+                let def = new defer_1.Defer();
                 console.log("Queued close LB");
                 setTimeout(() => {
                     resolve(r);
@@ -30,7 +30,7 @@ class DialogService {
                 });
             };
             let cancelFunc = () => {
-                let def = new entityStore_1.Defer();
+                let def = new defer_1.Defer();
                 console.log("Queued close LB");
                 setTimeout(() => {
                     reject("Modal: Cancelled by a user.");

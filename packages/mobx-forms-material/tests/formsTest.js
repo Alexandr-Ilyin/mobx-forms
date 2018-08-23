@@ -15,7 +15,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const testHelper_1 = require("../testRunner/utils/testHelper");
-const entityStore_1 = require("../src/store/internals/entityStore");
 const React = require("react");
 const mobx_react_1 = require("mobx-react");
 const strField_1 = require("../src/strField");
@@ -27,6 +26,7 @@ const multiSelectField_1 = require("../src/multiselect/multiSelectField");
 const selectField_1 = require("../src/select/selectField");
 const boolField_1 = require("../src/boolField/boolField");
 var equal = assert.equal;
+const wait_1 = require("../src/common/wait");
 let getOptions = (query) => __awaiter(this, void 0, void 0, function* () {
     return [
         { label: "Option A", value: "A" },
@@ -44,7 +44,7 @@ describe("Forms", function () {
             }
             init() {
                 return __awaiter(this, void 0, void 0, function* () {
-                    return entityStore_1.wait(1000);
+                    return wait_1.wait(1000);
                 });
             }
             renderBody() {

@@ -11,9 +11,9 @@ import { Queue } from '../common/queue';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { AppEvent } from '../common/events';
 import { addClass, removeClass } from '../common/utils';
-import { wait } from '../store/internals/entityStore';
 import { BadgePanel } from '../badgePanel/badgePanel';
 import { ErrorContainer } from '../errorContainer/errorContainer';
+import { wait } from '../common/wait';
 
 @cmp
 export class AsyncLoader {

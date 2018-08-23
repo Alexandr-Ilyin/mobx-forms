@@ -11,10 +11,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
 import { AsyncLoader } from '../loader/asyncLoader';
-import { StrField } from '../strField';
 import { Grid } from '@material-ui/core';
-import { Queue } from '../common/queue';
-import { wait } from '../store/internals/entityStore';
 
 @cmp
 export class Column<T> {

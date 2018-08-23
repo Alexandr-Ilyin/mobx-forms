@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
-const entityStore_1 = require("../store/internals/entityStore");
+const guid_1 = require("./guid");
 class AppEvent {
     constructor() {
         this.events = new events_1.EventEmitter();
-        this.name = entityStore_1.guid();
+        this.name = guid_1.guid();
     }
     trigger(e) {
         this.events.emit(this.name, e);

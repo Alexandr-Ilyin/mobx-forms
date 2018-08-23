@@ -21,6 +21,7 @@ export declare class BladePanel {
     private history;
     readonly panels: BladeMatchPanel[];
     addRoute(cfg: BladeRouteCfg): void;
+    closeBlade(closed: any): void;
     private getMatches;
     connectToHistory(history: any): void;
     replace(segment: any, replaced: any): void;
